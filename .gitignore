@@ -1,0 +1,4 @@
+.env
+portfolio.db
+static/uploads/
+__pycache__/
