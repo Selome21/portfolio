@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+    <head><meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Sign in — Portfolio editor</title>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    </head>
+    <body>
+        <div class="shell">
+            <header><a class="logo" href="/">ST <span>Selome Tesfaye Deribe</span></a><a class="manage" href="/">View portfolio ↗</a>
+            </header>
+            <main class="login-page">
+                <div class="login-card"><p class="eyebrow">Private editor</p>
+                    <h1>Sign in to<br><i>manage.</i></h1>
+                    <p class="login-note">The portfolio is public. Resume editing and project management are restricted to you.</p>{% if error %}
+                    <p class="login-error">{{ error }}</p>{% endif %}
+                    <form method="post"><input type="hidden" name="next" value="{{ next }}"><label>Username<input name="username" autocomplete="username" required autofocus></label>
+                        <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+                        <button class="button" type="submit">Sign in <span>↗</span></button>
+                    </form>
+                </div>
+            </main>
+            <footer>
+                <span>Public portfolio</span><a href="/">Back to portfolio ↗</a></footer></div></body></html>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{{ profile.name }} — Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+</head>
+<body style="{% for key,value in theme.items() %}{{ key }}:{{ value }};{% endfor %}"><div class="shell">
+    <header><a class="logo" href="/">ST <span>{{ profile.name }}</span></a><nav><a href="#about">About</a><a href="#experience">Experience</a><a href="#projects">Projects</a></nav><a class="manage" href="/login">Admin Login</a>
+    </header>
+    <main>
+        <section class="hero"><div><p class="eyebrow">Portfolio / Resume</p>
+            <h1>{{ profile.tagline }}</h1><p class="intro">{{ profile.name }} is a {{ profile.role|lower }} based in {{ profile.location }}.</p><a class="button" href="#projects">See my work ↘</a></div>
+            <div class="hero-photo{% if profile.profile_image %} clean-photo{% endif %}"{% if profile.profile_image %} style="background-image:url('{{ url_for('static',filename=profile.profile_image) }}')"{% endif %}><span>Curious by nature<br>Always learning</span>
+            </div>
+        </section>
+        <section id="about" class="section"><label>01 / About</label><div>
+            <h2>Making technology feel more <i>human.</i></h2><p class="copy">{{ profile.about }}</p>
+            <div class="facts"><span><b>Based in</b>{{ profile.location }}</span><span><b>Languages</b>{{ profile.languages }}</span><span><b>Contact</b><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></span>
+            </div>
+        </div>
+        </section><section id="experience" class="section"><label>02 / Experience</label>
+            <div><h2>Experience across <i>disciplines.</i></h2>
+                <div class="entries">{% for item in entries if item.category == 'experience' %}<article><small>{{ item.period }}</small>
+                    <div><h3>{{ item.title }}</h3><strong>{{ item.organization }}</strong><p>{{ item.description }}</p></div></article>{% endfor %}
+                </div>
+            </div></section><section class="section"><label>03 / Education</label>
+                <div class="entries">{% for item in entries if item.category == 'education' %}<article><small>{{ item.period }}</small>
+                    <div><h3>{{ item.title }}</h3><strong>{{ item.organization }}</strong><p>{{ item.description }}</p>
+                    </div></article>{% endfor %}</div></section><section id="projects" class="section"><label>04 / Projects</label>
+                        <div><h2>A growing collection of <i>ideas.</i></h2>
+                            <div class="projects">{% for project in projects %}<article class="project{% if project.image %} clean-photo{% endif %}"{% if project.image %} style="background-image:url('{{ url_for('static',filename=project.image) }}')"{% endif %}><a href="{{ project.url }}" target="_blank">View ↗</a><h3>{{ project.title }}
+
+                            </h3><p>{{ project.description }}</p><small>{{ project.stack }}</small></article>{% else %}<p>Add future projects from the editor.</p>{% endfor %}
+                        </div>
+                        </div></section></main><footer><span>© {{ profile.name }}</span><a href="mailto:{{ profile.email }}">{{ profile.email }}</a><a href="/edit">Manage resume ↗</a>
+                        </footer>
+                        </div>
+</body>
+</html>

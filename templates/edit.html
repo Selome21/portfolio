@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+    <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Edit resume</title><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    </head>
+    <body>
+        <div class="shell">
+            <header><a class="logo" href="/">ST <span>Resume editor</span></a><a class="manage" href="/">View portfolio ↗</a>
+            </header>
+            <main class="editor"><p class="eyebrow">Private local editor</p>
+                <h1>Keep your story <i>current.</i></h1>
+                <form method="post" enctype="multipart/form-data">
+                    <h2>Profile</h2>
+                    <div class="form-grid">{% for field,label in [('name','Name'),('role','Role'),('tagline','Tagline'),('location','Location'),('email','Email'),('phone','Phone'),('languages','Languages'),('about','About'),('skills','Skills')] %}
+                        <label>{{ label }}{% if field in ['about','skills'] %}
+                            <textarea name="{{ field }}" required>{{ profile[field] }}</textarea>{% else %}<input name="{{ field }}" value="{{ profile[field] }}" required>{% endif %}</label>{% endfor %}
+                            <label>Profile photo<input type="file" name="profile_image" accept="image/*"></label>
+                        </div>
+                        <div class="colors"><b>Colors</b>{% for field,label in [('ink_color','Ink'),('paper_color','Paper'),('accent_color','Accent'),('highlight_color','Highlight'),('art_color','Artwork')] %}<label>{{ label }}<input type="color" name="{{ field }}" value="{{ profile[field] }}"></label>{% endfor %}
+                        </div>
+                        <button class="button">Save profile</button>
+                    </form><h2>Experience and education</h2>{% for item in entries %}<form class="row" method="post" action="/edit/entry">
+                        <input type="hidden" name="id" value="{{ item.id }}"><select name="category"><option {% if item.category=='experience' %}selected{% endif %}>experience</option>
+                            <option {% if item.category=='education' %}selected{% endif %}>education</option></select>
+                            <input name="title" value="{{ item.title }}"><input name="organization" value="{{ item.organization }}">
+                            <input name="period" value="{{ item.period }}"><input name="description" value="{{ item.description }}">
+                            <button>Save</button>
+                            <button formaction="/edit/delete/entry/{{ item.id }}">Delete</button></form>{% endfor %}
+                            <h2>Projects</h2>{% for project in projects %}<form class="project-form" method="post" enctype="multipart/form-data" action="/edit/project">
+                                <input type="hidden" name="id" value="{{ project.id }}"><div class="form-grid"><label>Title<input name="title" value="{{ project.title }}">
+                                </label>
+                                <label>Link<input name="url" value="{{ project.url }}"></label>
+                                <label>Description<textarea name="description">{{ project.description }}</textarea>
+                                </label><label>Stack<input name="stack" value="{{ project.stack }}"></label>
+                                <label>Image<input type="file" name="image" accept="image/*"></label>
+                            </div><button class="button">Save project</button>
+                            <button formaction="/edit/delete/project/{{ project.id }}">Delete</button>
+                        </form>{% endfor %}<form class="project-form" method="post" enctype="multipart/form-data" action="/edit/project">
+                            <h3>Add a project</h3><div class="form-grid">
+                                <label>Title<input name="title" required></label><label>Link<input name="url" required></label>
+                                <label>Description<textarea name="description" required></textarea></label>
+                                <label>Stack<input name="stack" required></label>
+                                <label>Image<input type="file" name="image" accept="image/*"></label>
+                            </div><button class="button">Add project</button>
+                        </form>
+                    </main>
+                </div>
+            </body>
+            </html>
