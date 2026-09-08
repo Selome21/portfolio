@@ -9,8 +9,10 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("PORTFOLIO_SECRET_KEY", "local-development-secret-change-before-publishing")
-ADMIN_USERNAME = os.environ.get("PORTFOLIO_ADMIN_USERNAME", "selome")
-ADMIN_PASSWORD = os.environ.get("PORTFOLIO_ADMIN_PASSWORD", "change-selome-now")
+ADMIN_USERNAME = os.environ.get("PORTFOLIO_ADMIN_USERNAME")
+ADMIN_PASSWORD = os.environ.get("PORTFOLIO_ADMIN_PASSWORD")
+if not ADMIN_USERNAME or not ADMIN_PASSWORD:
+    raise RuntimeError("Set PORTFOLIO_ADMIN_USERNAME and PORTFOLIO_ADMIN_PASSWORD environment variables before running the app.")
 DATABASE = Path(__file__).with_name("portfolio.db")
 UPLOAD_FOLDER = Path(__file__).parent / "static" / "uploads"
 ALLOWED_IMAGES = {"png", "jpg", "jpeg", "gif", "webp"}
