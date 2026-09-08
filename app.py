@@ -7,12 +7,27 @@ from pathlib import Path
 from flask import Flask, redirect, render_template, request, session, url_for
 from werkzeug.utils import secure_filename
 
+
+def load_local_env():
+    env_file = Path(__file__).with_name(".env")
+    if not env_file.exists():
+        return
+    for line in env_file.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+load_local_env()
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("PORTFOLIO_SECRET_KEY", "local-development-secret-change-before-publishing")
 ADMIN_USERNAME = os.environ.get("PORTFOLIO_ADMIN_USERNAME")
 ADMIN_PASSWORD = os.environ.get("PORTFOLIO_ADMIN_PASSWORD")
 if not ADMIN_USERNAME or not ADMIN_PASSWORD:
-    raise RuntimeError("Set PORTFOLIO_ADMIN_USERNAME and PORTFOLIO_ADMIN_PASSWORD environment variables before running the app.")
+    raise RuntimeError("Add PORTFOLIO_ADMIN_USERNAME and PORTFOLIO_ADMIN_PASSWORD to the local .env file.")
 DATABASE = Path(__file__).with_name("portfolio.db")
 UPLOAD_FOLDER = Path(__file__).parent / "static" / "uploads"
 ALLOWED_IMAGES = {"png", "jpg", "jpeg", "gif", "webp"}
