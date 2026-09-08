@@ -1,4 +1,4 @@
-# Selome Portfolio
+# My Portfolio
 
 Run `python -m pip install -r requirements.txt`, then `python app.py`.
 
