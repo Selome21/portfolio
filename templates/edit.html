@@ -27,6 +27,18 @@
                             <input name="period" value="{{ item.period }}"><input name="description" value="{{ item.description }}">
                             <button>Save</button>
                             <button formaction="/edit/delete/entry/{{ item.id }}">Delete</button></form>{% endfor %}
+                            <form class="row" method="post" action="/edit/entry">
+                                <h3>Add a new entry</h3>
+                                <select name="category">
+                                    <option value="experience">experience</option>
+                                    <option value="education">education</option>
+                                </select>
+                                <input name="title" placeholder="Title" required>
+                                <input name="organization" placeholder="Organization" required>
+                                <input name="period" placeholder="Period" required>
+                                <input name="description" placeholder="Description">
+                                <button class="button">Add entry</button>
+                            </form>
                             <h2>Projects</h2>{% for project in projects %}<form class="project-form" method="post" enctype="multipart/form-data" action="/edit/project">
                                 <input type="hidden" name="id" value="{{ project.id }}"><div class="form-grid"><label>Title<input name="title" value="{{ project.title }}">
                                 </label>
