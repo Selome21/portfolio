@@ -21,6 +21,8 @@
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let activeSpread = 0;
     let touchStartX = null;
+    let touchStartY = null;
+    let suppressClickUntil = 0;
     let turnTimeout;
 
     function renderSpread(index, direction, pageId) {
@@ -121,22 +123,41 @@
     });
 
     book.addEventListener("pointerdown", (event) => {
-        touchStartX = event.pointerType === "touch" ? event.clientX : null;
+        if (event.pointerType === "touch") {
+            touchStartX = event.clientX;
+            touchStartY = event.clientY;
+        }
     });
 
     book.addEventListener("pointerup", (event) => {
-        if (touchStartX === null || event.target.closest("a, button")) {
+        if (touchStartX === null || touchStartY === null || event.target.closest("a, button")) {
             touchStartX = null;
+            touchStartY = null;
             return;
         }
-        const distance = event.clientX - touchStartX;
+        const distanceX = event.clientX - touchStartX;
+        const distanceY = event.clientY - touchStartY;
         touchStartX = null;
-        if (Math.abs(distance) > 70) {
-            turn(distance < 0 ? "forward" : "back");
+        touchStartY = null;
+        if (Math.abs(distanceX) > 70 && Math.abs(distanceX) > Math.abs(distanceY) * 1.25) {
+            suppressClickUntil = Date.now() + 500;
+            turn(distanceX < 0 ? "forward" : "back");
         }
     });
 
     book.addEventListener("pointercancel", () => {
         touchStartX = null;
+        touchStartY = null;
+    });
+
+    book.addEventListener("click", (event) => {
+        if (Date.now() < suppressClickUntil || event.button !== 0 || event.target.closest("a, button, input, textarea, select, label")) {
+            return;
+        }
+
+        const spread = spreads[activeSpread];
+        const bounds = spread.getBoundingClientRect();
+        const midpoint = bounds.left + bounds.width / 2;
+        turn(event.clientX >= midpoint ? "forward" : "back");
     });
 })();
