@@ -15,3 +15,5 @@ python build_static.py
 Commit the generated `index.html` and `uploads/` files, then push them to `main`. The public site is <https://selome21.github.io/portfolio/>. The admin editor remains available only when running the Flask app locally.
 
 The generated page and copied images are public. The local database, `.env`, and original upload folder remain excluded from Git.
+
+The portfolio is presented as an interactive book. Use the page navigation, Previous/Next buttons, arrow keys while the book is focused, or swipe on touch screens. Reduced-motion preferences are respected.
