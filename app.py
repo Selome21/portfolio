@@ -56,11 +56,11 @@ DEFAULT_ENTRIES = [
     ("experience", "Research Assistant", "Sungkyunkwan University Communication Lab", "Fall 2023 – February 2026", "Supported research work in an electrical and computer engineering lab."),
     ("experience", "Project Assistant", "Byucksan Power", "July 2021 – January 2022", "Supported project operations as a project assistant."),
     ("experience", "Project Assistant · Intern", "Nuri Telecom (NuriFlex)", "March – May 2021", "Supported projects as an intern project assistant."),
-    ("experience", "Assistant Coordinator · Interpreter", "YongIn University", "2018, 2019, 2024", "Coordinated volunteer programs and interpreted for international participants."),
+    ("experience", "Assistant Coordinator · Interpreter", "YongIn University", "Summer 2018, 2019, 2024, 2025", "Coordinated volunteer programs and interpreted for international participants."),
     ("experience", "Amharic Teacher", "KOICA", "July – August 2018", "Taught Amharic in a cross-cultural classroom."),
     ("education", "MSc. Electrical and Computer Engineering", "Sungkyunkwan University", "Fall 2023 – February 2026", "Communication laboratory researcher"),
     ("education", "BSc. Software Engineering", "Addis Ababa Science and Technology University", "September 2017 – September 2021", ""),
-    ("education", "Disaster Engineering and Fire Fighting", "Kangwon National University", "2022 – 2023", "Scholarship student"),
+    ("education", "Disaster Engineering and Fire Fighting", "Kangwon National University", "Winter 2022 – Summer 2023", "Scholarship student"),
 ]
 
 
