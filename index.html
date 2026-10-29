@@ -1,74 +1,116 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en">
+<head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#fff9ef">
     <title>Selome Tesfaye Deribe — Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./static/style.css">
 </head>
-<body style="--ink:#35243e;--paper:#fff9ef;--accent:#c2185b;--highlight:#d4f000;--art:#ffdc55;"><div class="shell">
-    <header><a class="logo" href="./">ST <span>Selome Tesfaye Deribe</span></a><nav><a href="#about">About</a><a href="#experience">Experience</a><a href="#projects">Projects</a></nav>
-    </header>
-    <main>
-        <section class="hero"><div><p class="eyebrow">Portfolio / Resume</p>
-            <h1>Software Engineer</h1><p class="intro">Selome Tesfaye Deribe is a software engineer · research assistant · multilingual communicator based in Suwon, South Korea.</p><a class="button" href="#projects">See my work ↘</a></div>
-            <div class="hero-photo clean-photo photo-card" style="background-image:url('uploads/instagram-garden.jpg')"><span>Curious by nature<br>Always learning</span></div>
-        </section>
-        <section id="about" class="section"><label>01 / About</label><div>
-            <h2>Making technology feel more <i>human.</i></h2><p class="copy">I am a software engineering graduate and electrical and computer engineering researcher with experience across technology, education, interpretation, and project coordination.</p>
-            <p class="copy">My Orthodox Christian faith, Ethiopian roots, and life in South Korea shape how I connect with people, languages, and ideas across cultures.</p>
-            <div class="facts"><span><b>Based in</b>Suwon, South Korea</span><span><b>Languages</b>English · Amharic · Korean (TOPIK Level 5)</span><span><b>Contact</b><a href="mailto:yselome@gmail.com">yselome@gmail.com</a></span><span><b>Find me online</b><a href="https://www.linkedin.com/in/selome-tesfaye-deribe-3b661a18a/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.instagram.com/selome_t/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></span>
-            </div>
-            <aside class="joy-note" aria-label="Outside work">
-                <span class="joy-kicker">A little more me</span>
-                <h3>Good coffee, great stories, new conversations.</h3>
-                <p>I love food, books, movies, and connecting with people. You’ll often find me cafe hopping, discovering a new spot, or making a new connection.</p>
-                <div class="joy-tags" aria-label="Things I enjoy"><span>Food</span><span>Books</span><span>Movies</span><span>Cafe hopping</span></div>
-            </aside>
-        </div>
-        </section><section id="experience" class="section"><label>02 / Experience</label>
-            <div><h2>Experience across <i>disciplines.</i></h2>
-                <div class="entries"><article><small>Fall 2026 – Present</small>
-                    <div><h3>Research and Development Professional</h3><strong>TreeM</strong><p></p></div></article><article><small>Summer 2026 – Present</small>
-                    <div><h3>Financial Consultant</h3><strong>Shinhan Life (Freelancer)</strong><p></p></div></article><article><small>Fall 2023 – February 2026</small>
-                    <div><h3>Research Assistant</h3><strong>Sungkyunkwan University Communication Lab</strong><p>Supported research work in an electrical and computer engineering lab.</p></div></article><article><small>July 2021 – January 2022</small>
-                    <div><h3>Project Assistant</h3><strong>Byucksan Power</strong><p>Supported project operations as a project assistant.</p></div></article><article><small>March – May 2021</small>
-                    <div><h3>Project Assistant · Intern</h3><strong>Nuri Telecom (NuriFlex)</strong><p>Supported projects as an intern project assistant.</p></div></article><article><small>2018, 2019, 2024</small>
-                    <div><h3>Assistant Coordinator · Interpreter</h3><strong>YongIn University</strong><p>Coordinated volunteer programs and interpreted for international participants.</p></div></article><article><small>July – August 2018</small>
-                    <div><h3>Amharic Teacher</h3><strong>KOICA</strong><p>Taught Amharic in a cross-cultural classroom.</p></div></article>
+<body style="--ink:#35243e;--paper:#fff9ef;--accent:#c2185b;--highlight:#d4f000;--art:#ffdc55;">
+    <div class="shell">
+        <header>
+            <a class="logo" href="./">ST <span>Selome Tesfaye Deribe</span></a>
+            <nav aria-label="Portfolio pages">
+                <a href="#page-about">About</a>
+                <a href="#page-experience">Experience</a>
+                <a href="#page-education">Education</a>
+                <a href="#page-projects">Projects</a>
+            </nav>
+
+        </header>
+        <main>
+            <div class="book" data-book aria-label="Interactive portfolio book" tabindex="0">
+                <div class="book-spread">
+                    <section class="book-page book-cover" id="page-home" aria-labelledby="book-title">
+                        <div class="cover-copy">
+                            <p class="eyebrow">Portfolio / Resume</p>
+                            <h1 id="book-title">Software Engineer</h1>
+                            <p class="intro">Selome Tesfaye Deribe is a software engineer · research assistant · multilingual communicator based in Suwon, South Korea.</p>
+                            <a class="button" href="#page-projects">Explore my work <span aria-hidden="true">↗</span></a>
+                        </div>
+                        <div class="hero-photo clean-photo photo-card" style="background-image:url('uploads/instagram-garden.jpg')" role="img" aria-label="Selome in a botanical garden">
+                            <span>Curious by nature<br>Always learning</span>
+                        </div>
+                        <span class="page-number">01</span>
+                    </section>
+                    <section class="book-page" id="page-about" aria-labelledby="about-title">
+                        <p class="page-kicker">01 / A little about me</p>
+                        <h2 id="about-title">Making technology feel more <i>human.</i></h2>
+                        <p class="copy">I am a software engineering graduate and electrical and computer engineering researcher with experience across technology, education, interpretation, and project coordination.</p>
+                        <p class="copy">My Orthodox Christian faith, Ethiopian roots, and life in South Korea shape how I connect with people, languages, and ideas across cultures.</p>
+                        <div class="facts">
+                            <span><b>Based in</b>Suwon, South Korea</span>
+                            <span><b>Languages</b>English · Amharic · Korean (TOPIK Level 5)</span>
+                            <span><b>Contact</b><a href="mailto:yselome@gmail.com">yselome@gmail.com</a></span>
+                            <span><b>Find me online</b><a href="https://www.linkedin.com/in/selome-tesfaye-deribe-3b661a18a/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.instagram.com/selome_t/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></span>
+                        </div>
+                        <aside class="joy-note" aria-label="Outside work">
+                            <span class="joy-kicker">A little more me</span>
+                            <h3>Good coffee, great stories, new conversations.</h3>
+                            <p>I love food, books, movies, and connecting with people. You’ll often find me cafe hopping, discovering a new spot, or making a new connection.</p>
+                            <div class="joy-tags" aria-label="Things I enjoy"><span>Food</span><span>Books</span><span>Movies</span><span>Cafe hopping</span></div>
+                        </aside>
+                        <span class="page-number">02</span>
+                    </section>
                 </div>
-            </div></section><section class="section"><label>03 / Education</label>
-                <div class="entries"><article><small>Fall 2023 – February 2026</small>
-                    <div><h3>MSc. Electrical and Computer Engineering</h3><strong>Sungkyunkwan University</strong><p>Communication laboratory researcher</p>
-                    </div></article><article><small>September 2017 – September 2021</small>
-                    <div><h3>BSc. Software Engineering</h3><strong>Addis Ababa Science and Technology University</strong><p>Student</p>
-                    </div></article><article><small>2022 – 2023</small>
-                    <div><h3>Disaster Engineering and Fire Fighting</h3><strong>Kangwon National University</strong><p>Scholarship student</p>
-                    </div></article></div></section><section id="projects" class="section"><label>04 / Projects</label>
-                        <div><h2>A growing collection of <i>ideas.</i></h2>
-                            <div class="projects"><article class="project"><a href="https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE11906183" target="_blank">View ↗</a><h3>Performance Analysis of Element Splitting in Self Sustained IRS assisted Networks
-
-                            </h3><p>This study proposes a multi-channel IoT network that utilizes Intelligent Reflecting Surfaces (IRS) to harvest energy and reflect signals, and derives the result that throughput varies depending on the distance between the user and the IRS as well as the number of allocated antennas.</p><small>KICS: 한국통신학회</small></article><article class="project"><a href="https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE11667540" target="_blank">View ↗</a><h3>On HARQ-NOMA with Multi-RIS Systems
-
-                            </h3><p>This study analyzes the performance of a wireless system utilizing hybrid Hybrid Automatic Repeat Request (HARQ) and multiple Reconfigurable Intelligent Surfaces (RIS), suggesting that the integration of Non-Orthogonal Multiple Access (NOMA) and HARQ can contribute to communication optimization.</p><small>KICS: 한국통신학회</small></article><article class="project"><a href="https://d2j16w31g89z0j.cloudfront.net/site/2025s/abs/1048-YRXOF.pdf" target="_blank">View ↗</a><h3>Fairness in RIS Assisted Networks for Resource Allocation
-
-                            </h3><p>Reconfigurable intelligent surfaces (RISs) have emerged as transformative technology for next-generation wireless networks,
+                <div class="book-spread">
+                    <section class="book-page" id="page-experience" aria-labelledby="experience-title">
+                        <p class="page-kicker">02 / The work so far</p>
+                        <h2 id="experience-title">Experience across <i>disciplines.</i></h2>
+                        <div class="entries"><article><small>Fall 2026 – Present</small><div><h3>Research and Development Professional</h3><strong>TreeM</strong><p></p></div></article><article><small>Summer 2026 – Present</small><div><h3>Financial Consultant</h3><strong>Shinhan Life (Freelancer)</strong><p></p></div></article><article><small>Fall 2023 – February 2026</small><div><h3>Research Assistant</h3><strong>Sungkyunkwan University Communication Lab</strong><p>Supported research work in an electrical and computer engineering lab.</p></div></article><article><small>July 2021 – January 2022</small><div><h3>Project Assistant</h3><strong>Byucksan Power</strong><p>Supported project operations as a project assistant.</p></div></article><article><small>March – May 2021</small><div><h3>Project Assistant · Intern</h3><strong>Nuri Telecom (NuriFlex)</strong><p>Supported projects as an intern project assistant.</p></div></article><article><small>2018, 2019, 2024</small><div><h3>Assistant Coordinator · Interpreter</h3><strong>YongIn University</strong><p>Coordinated volunteer programs and interpreted for international participants.</p></div></article><article><small>July – August 2018</small><div><h3>Amharic Teacher</h3><strong>KOICA</strong><p>Taught Amharic in a cross-cultural classroom.</p></div></article></div>
+                        <span class="page-number">03</span>
+                    </section>
+                    <section class="book-page" id="page-education" aria-labelledby="education-title">
+                        <p class="page-kicker">03 / The learning</p>
+                        <h2 id="education-title">Curiosity is a <i>practice.</i></h2>
+                        <div class="entries"><article><small>Fall 2023 – February 2026</small><div><h3>MSc. Electrical and Computer Engineering</h3><strong>Sungkyunkwan University</strong><p>Communication laboratory researcher</p></div></article><article><small>September 2017 – September 2021</small><div><h3>BSc. Software Engineering</h3><strong>Addis Ababa Science and Technology University</strong><p>Student</p></div></article><article><small>2022 – 2023</small><div><h3>Disaster Engineering and Fire Fighting</h3><strong>Kangwon National University</strong><p>Scholarship student</p></div></article></div>
+                        <span class="page-number">04</span>
+                    </section>
+                </div>
+                <div class="book-spread">
+                    <section class="book-page project-page" id="page-projects" aria-labelledby="projects-title">
+                        <p class="page-kicker">04 / Things I’ve made</p>
+                        <h2 id="projects-title">A growing collection of <i>ideas.</i></h2>
+                        <div class="projects"><article class="project"><a href="https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE11906183" target="_blank" rel="noopener noreferrer">View ↗</a><h3>Performance Analysis of Element Splitting in Self Sustained IRS assisted Networks</h3><p>This study proposes a multi-channel IoT network that utilizes Intelligent Reflecting Surfaces (IRS) to harvest energy and reflect signals, and derives the result that throughput varies depending on the distance between the user and the IRS as well as the number of allocated antennas.</p><small>KICS: 한국통신학회</small></article><article class="project"><a href="https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE11667540" target="_blank" rel="noopener noreferrer">View ↗</a><h3>On HARQ-NOMA with Multi-RIS Systems</h3><p>This study analyzes the performance of a wireless system utilizing hybrid Hybrid Automatic Repeat Request (HARQ) and multiple Reconfigurable Intelligent Surfaces (RIS), suggesting that the integration of Non-Orthogonal Multiple Access (NOMA) and HARQ can contribute to communication optimization.</p><small>KICS: 한국통신학회</small></article><article class="project"><a href="https://d2j16w31g89z0j.cloudfront.net/site/2025s/abs/1048-YRXOF.pdf" target="_blank" rel="noopener noreferrer">View ↗</a><h3>Fairness in RIS Assisted Networks for Resource Allocation</h3><p>Reconfigurable intelligent surfaces (RISs) have emerged as transformative technology for next-generation wireless networks,
 offering dynamic control over electromagnetic wave propagation to enhance spectral efficiency, coverage, and energy efficiency.
 However, to provide equal resource allocation, RIS implementation should also consider multiple user fairness by examining
 how RIS-assisted networks might reduce user-to-user differences in signal quality, data rates, and access possibilities. This
 research investigates RIS from a fairness standpoint. We examine current fairness designs, optimization strategies, and RIS
-implementation issues to improve fairness in diverse networks.</p><small>KICS: 한국통신학회</small></article><article class="project"><a href="https://d2j16w31g89z0j.cloudfront.net/site/2024f/abs/0692-XVUBF.pdf" target="_blank">View ↗</a><h3>Simultaneous Transmitting and Reflecting RIS: Fundamentals  and Progress.
-
-                            </h3><p>In this paper, we explore simultaneously transmitting and reflecting reconfigurable intelligent surfaces (STAR-RIS) and introduce
+implementation issues to improve fairness in diverse networks.</p><small>KICS: 한국통신학회</small></article><article class="project"><a href="https://d2j16w31g89z0j.cloudfront.net/site/2024f/abs/0692-XVUBF.pdf" target="_blank" rel="noopener noreferrer">View ↗</a><h3>Simultaneous Transmitting and Reflecting RIS: Fundamentals  and Progress.</h3><p>In this paper, we explore simultaneously transmitting and reflecting reconfigurable intelligent surfaces (STAR-RIS) and introduce
 the current technologies and their research direction to achieve wide coverage and quality of service (QoS). Looking at several contributions
 and state-of-the-art schemes we further analyze its use case and working principles that go hand in hand with the rapidly growing and changing
 world. Building on various literatures and studies we examined STAR-RIS composition, operating protocols, enabled technologies and their
 comparison with its conventional scheme RIS. From here we could analyze research directions and significant advancements for future
-innovative technologies.</p><small>KICS: 한국통신학회</small></article><article class="project"><a href="https://ieeexplore.ieee.org/document/10418294" target="_blank">View ↗</a><h3>Data Augmentation Framework for Improving Image Recognition Using cycleGAN
+innovative technologies.</p><small>KICS: 한국통신학회</small></article><article class="project"><a href="https://ieeexplore.ieee.org/document/10418294" target="_blank" rel="noopener noreferrer">View ↗</a><h3>Data Augmentation Framework for Improving Image Recognition Using cycleGAN</h3><p>This paper proposes a novel framework that significantly enhances the performance of semantic segmentation models in recognizing specific objects. Leveraging the capabilities of Generative Adversarial Networks (GANs), particularly Cycle-GAN, this framework focuses on augmenting high-quality data to improve object recognition in autonomous driving and other applications. The study utilizes a dataset of 5,005 road images, enriched with polygon labels for precise object recognition. Key advancements in this research include the implementation of feature matching and fact forcing techniques to stabilize and integrate GAN performance, thereby overcoming common challenges like mode collapse, slow training, and overfitting. In the performance-enhanced GAN model, we improved the Discriminator Loss from the original 1.0517 to 0.0001, achieving convergence to zero 66.67% faster.</p><small>2024 18th International Conference on Ubiquitous Information Management and Communication (IMCOM)</small></article></div>
+                        <span class="page-number">05</span>
+                    </section>
+                    <section class="book-page closing-page" id="page-contact" aria-labelledby="contact-title">
+                        <p class="page-kicker">05 / The next chapter</p>
+                        <div class="closing-art" aria-hidden="true"><span>✳</span><span>✦</span><span>✳</span></div>
+                        <h2 id="contact-title">Let’s make something <i>meaningful.</i></h2>
+                        <p class="copy">Have an idea, an opportunity, or a favorite cafe to recommend? I’d love to hear from you.</p>
+                        <a class="button" href="mailto:yselome@gmail.com">Say hello <span aria-hidden="true">↗</span></a>
+                        <div class="closing-links"><a href="https://www.linkedin.com/in/selome-tesfaye-deribe-3b661a18a/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.instagram.com/selome_t/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></div>
+                        <span class="page-number">06</span>
+                    </section>
+                </div>
+            </div>
+            <div class="book-controls" data-book-controls hidden>
+                <button class="page-button" type="button" data-previous aria-label="Turn to previous spread">← <span>Previous</span></button>
+                <p class="page-status" aria-live="polite" data-page-status>Spread 1 of 3 · pages 1–2</p>
+                <button class="page-button" type="button" data-next aria-label="Turn to next spread"><span>Next</span> →</button>
+            </div>
+            <p class="book-hint" data-book-hint hidden>Turn pages with the arrows, keyboard, or a swipe</p>
+        </main>
+        <footer>
+            <span>© Selome Tesfaye Deribe</span>
+            <a href="mailto:yselome@gmail.com">yselome@gmail.com</a>
+            <div class="social-links"><a href="https://www.linkedin.com/in/selome-tesfaye-deribe-3b661a18a/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.instagram.com/selome_t/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></div>
 
-                            </h3><p>This paper proposes a novel framework that significantly enhances the performance of semantic segmentation models in recognizing specific objects. Leveraging the capabilities of Generative Adversarial Networks (GANs), particularly Cycle-GAN, this framework focuses on augmenting high-quality data to improve object recognition in autonomous driving and other applications. The study utilizes a dataset of 5,005 road images, enriched with polygon labels for precise object recognition. Key advancements in this research include the implementation of feature matching and fact forcing techniques to stabilize and integrate GAN performance, thereby overcoming common challenges like mode collapse, slow training, and overfitting. In the performance-enhanced GAN model, we improved the Discriminator Loss from the original 1.0517 to 0.0001, achieving convergence to zero 66.67% faster.</p><small>2024 18th International Conference on Ubiquitous Information Management and Communication (IMCOM)</small></article>
-                        </div>
-                        </div></section></main><footer><span>© Selome Tesfaye Deribe</span><a href="mailto:yselome@gmail.com">yselome@gmail.com</a><div class="social-links"><a href="https://www.linkedin.com/in/selome-tesfaye-deribe-3b661a18a/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.instagram.com/selome_t/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></div>
-                        </footer>
-                        </div>
+        </footer>
+    </div>
+    <script src="./static/book.js" defer></script>
 </body>
 </html>

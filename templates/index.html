@@ -1,46 +1,106 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en">
+<head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#fff9ef">
     <title>{{ profile.name }} — Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% if static_site %}./static/style.css{% else %}{{ url_for('static',filename='style.css') }}{% endif %}">
 </head>
-<body style="{% for key,value in theme.items() %}{{ key }}:{{ value }};{% endfor %}"><div class="shell">
-    <header><a class="logo" href="{% if static_site %}./{% else %}/{% endif %}">ST <span>{{ profile.name }}</span></a><nav><a href="#about">About</a><a href="#experience">Experience</a><a href="#projects">Projects</a></nav>{% if not static_site %}<a class="manage" href="/login">Admin Login</a>{% endif %}
-    </header>
-    <main>
-        <section class="hero"><div><p class="eyebrow">Portfolio / Resume</p>
-            <h1>{{ profile.tagline }}</h1><p class="intro">{{ profile.name }} is a {{ profile.role|lower }} based in {{ profile.location }}.</p><a class="button" href="#projects">See my work ↘</a></div>
-            <div class="hero-photo{% if profile.profile_image %} clean-photo{% endif %} photo-card"{% if profile.profile_image %} style="background-image:url('{% if static_site %}{{ profile.profile_image }}{% else %}{{ url_for('static',filename=profile.profile_image) }}{% endif %}')"{% endif %}><span>Curious by nature<br>Always learning</span></div>
-        </section>
-        <section id="about" class="section"><label>01 / About</label><div>
-            <h2>Making technology feel more <i>human.</i></h2><p class="copy">{{ profile.about }}</p>
-            <p class="copy">My Orthodox Christian faith, Ethiopian roots, and life in South Korea shape how I connect with people, languages, and ideas across cultures.</p>
-            <div class="facts"><span><b>Based in</b>{{ profile.location }}</span><span><b>Languages</b>{{ profile.languages }}</span><span><b>Contact</b><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></span><span><b>Find me online</b><a href="https://www.linkedin.com/in/selome-tesfaye-deribe-3b661a18a/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.instagram.com/selome_t/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></span>
-            </div>
-            <aside class="joy-note" aria-label="Outside work">
-                <span class="joy-kicker">A little more me</span>
-                <h3>Good coffee, great stories, new conversations.</h3>
-                <p>I love food, books, movies, and connecting with people. You’ll often find me cafe hopping, discovering a new spot, or making a new connection.</p>
-                <div class="joy-tags" aria-label="Things I enjoy"><span>Food</span><span>Books</span><span>Movies</span><span>Cafe hopping</span></div>
-            </aside>
-        </div>
-        </section><section id="experience" class="section"><label>02 / Experience</label>
-            <div><h2>Experience across <i>disciplines.</i></h2>
-                <div class="entries">{% for item in entries if item.category == 'experience' %}<article><small>{{ item.period }}</small>
-                    <div><h3>{{ item.title }}</h3><strong>{{ item.organization }}</strong><p>{{ item.description }}</p></div></article>{% endfor %}
+<body style="{% for key,value in theme.items() %}{{ key }}:{{ value }};{% endfor %}">
+    <div class="shell">
+        <header>
+            <a class="logo" href="{% if static_site %}./{% else %}/{% endif %}">ST <span>{{ profile.name }}</span></a>
+            <nav aria-label="Portfolio pages">
+                <a href="#page-about">About</a>
+                <a href="#page-experience">Experience</a>
+                <a href="#page-education">Education</a>
+                <a href="#page-projects">Projects</a>
+            </nav>
+            {% if not static_site %}<a class="manage" href="/login">Admin Login</a>{% endif %}
+        </header>
+        <main>
+            <div class="book" data-book aria-label="Interactive portfolio book" tabindex="0">
+                <div class="book-spread">
+                    <section class="book-page book-cover" id="page-home" aria-labelledby="book-title">
+                        <div class="cover-copy">
+                            <p class="eyebrow">Portfolio / Resume</p>
+                            <h1 id="book-title">{{ profile.tagline }}</h1>
+                            <p class="intro">{{ profile.name }} is a {{ profile.role|lower }} based in {{ profile.location }}.</p>
+                            <a class="button" href="#page-projects">Explore my work <span aria-hidden="true">↗</span></a>
+                        </div>
+                        <div class="hero-photo{% if profile.profile_image %} clean-photo{% endif %} photo-card"{% if profile.profile_image %} style="background-image:url('{% if static_site %}{{ profile.profile_image }}{% else %}{{ url_for('static',filename=profile.profile_image) }}{% endif %}')"{% endif %} role="img" aria-label="Selome in a botanical garden">
+                            <span>Curious by nature<br>Always learning</span>
+                        </div>
+                        <span class="page-number">01</span>
+                    </section>
+                    <section class="book-page" id="page-about" aria-labelledby="about-title">
+                        <p class="page-kicker">01 / A little about me</p>
+                        <h2 id="about-title">Making technology feel more <i>human.</i></h2>
+                        <p class="copy">{{ profile.about }}</p>
+                        <p class="copy">My Orthodox Christian faith, Ethiopian roots, and life in South Korea shape how I connect with people, languages, and ideas across cultures.</p>
+                        <div class="facts">
+                            <span><b>Based in</b>{{ profile.location }}</span>
+                            <span><b>Languages</b>{{ profile.languages }}</span>
+                            <span><b>Contact</b><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></span>
+                            <span><b>Find me online</b><a href="https://www.linkedin.com/in/selome-tesfaye-deribe-3b661a18a/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.instagram.com/selome_t/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></span>
+                        </div>
+                        <aside class="joy-note" aria-label="Outside work">
+                            <span class="joy-kicker">A little more me</span>
+                            <h3>Good coffee, great stories, new conversations.</h3>
+                            <p>I love food, books, movies, and connecting with people. You’ll often find me cafe hopping, discovering a new spot, or making a new connection.</p>
+                            <div class="joy-tags" aria-label="Things I enjoy"><span>Food</span><span>Books</span><span>Movies</span><span>Cafe hopping</span></div>
+                        </aside>
+                        <span class="page-number">02</span>
+                    </section>
                 </div>
-            </div></section><section class="section"><label>03 / Education</label>
-                <div class="entries">{% for item in entries if item.category == 'education' %}<article><small>{{ item.period }}</small>
-                    <div><h3>{{ item.title }}</h3><strong>{{ item.organization }}</strong><p>{{ item.description }}</p>
-                    </div></article>{% endfor %}</div></section><section id="projects" class="section"><label>04 / Projects</label>
-                        <div><h2>A growing collection of <i>ideas.</i></h2>
-                            <div class="projects">{% for project in projects %}<article class="project{% if project.image %} clean-photo{% endif %}"{% if project.image %} style="background-image:url('{% if static_site %}{{ project.image }}{% else %}{{ url_for('static',filename=project.image) }}{% endif %}')"{% endif %}><a href="{{ project.url }}" target="_blank">View ↗</a><h3>{{ project.title }}
-
-                            </h3><p>{{ project.description }}</p><small>{{ project.stack }}</small></article>{% else %}<p>Add future projects from the editor.</p>{% endfor %}
-                        </div>
-                        </div></section></main><footer><span>© {{ profile.name }}</span><a href="mailto:{{ profile.email }}">{{ profile.email }}</a><div class="social-links"><a href="https://www.linkedin.com/in/selome-tesfaye-deribe-3b661a18a/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.instagram.com/selome_t/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></div>{% if not static_site %}<a href="/login?next=/edit">Manage resume ↗</a>{% endif %}
-                        </footer>
-                        </div>
+                <div class="book-spread">
+                    <section class="book-page" id="page-experience" aria-labelledby="experience-title">
+                        <p class="page-kicker">02 / The work so far</p>
+                        <h2 id="experience-title">Experience across <i>disciplines.</i></h2>
+                        <div class="entries">{% for item in entries if item.category == 'experience' %}<article><small>{{ item.period }}</small><div><h3>{{ item.title }}</h3><strong>{{ item.organization }}</strong><p>{{ item.description }}</p></div></article>{% endfor %}</div>
+                        <span class="page-number">03</span>
+                    </section>
+                    <section class="book-page" id="page-education" aria-labelledby="education-title">
+                        <p class="page-kicker">03 / The learning</p>
+                        <h2 id="education-title">Curiosity is a <i>practice.</i></h2>
+                        <div class="entries">{% for item in entries if item.category == 'education' %}<article><small>{{ item.period }}</small><div><h3>{{ item.title }}</h3><strong>{{ item.organization }}</strong><p>{{ item.description }}</p></div></article>{% endfor %}</div>
+                        <span class="page-number">04</span>
+                    </section>
+                </div>
+                <div class="book-spread">
+                    <section class="book-page project-page" id="page-projects" aria-labelledby="projects-title">
+                        <p class="page-kicker">04 / Things I’ve made</p>
+                        <h2 id="projects-title">A growing collection of <i>ideas.</i></h2>
+                        <div class="projects">{% for project in projects %}<article class="project{% if project.image %} clean-photo{% endif %}"{% if project.image %} style="background-image:url('{% if static_site %}{{ project.image }}{% else %}{{ url_for('static',filename=project.image) }}{% endif %}')"{% endif %}><a href="{{ project.url }}" target="_blank" rel="noopener noreferrer">View ↗</a><h3>{{ project.title }}</h3><p>{{ project.description }}</p><small>{{ project.stack }}</small></article>{% else %}<p>Add future projects from the editor.</p>{% endfor %}</div>
+                        <span class="page-number">05</span>
+                    </section>
+                    <section class="book-page closing-page" id="page-contact" aria-labelledby="contact-title">
+                        <p class="page-kicker">05 / The next chapter</p>
+                        <div class="closing-art" aria-hidden="true"><span>✳</span><span>✦</span><span>✳</span></div>
+                        <h2 id="contact-title">Let’s make something <i>meaningful.</i></h2>
+                        <p class="copy">Have an idea, an opportunity, or a favorite cafe to recommend? I’d love to hear from you.</p>
+                        <a class="button" href="mailto:{{ profile.email }}">Say hello <span aria-hidden="true">↗</span></a>
+                        <div class="closing-links"><a href="https://www.linkedin.com/in/selome-tesfaye-deribe-3b661a18a/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.instagram.com/selome_t/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></div>
+                        <span class="page-number">06</span>
+                    </section>
+                </div>
+            </div>
+            <div class="book-controls" data-book-controls hidden>
+                <button class="page-button" type="button" data-previous aria-label="Turn to previous spread">← <span>Previous</span></button>
+                <p class="page-status" aria-live="polite" data-page-status>Spread 1 of 3 · pages 1–2</p>
+                <button class="page-button" type="button" data-next aria-label="Turn to next spread"><span>Next</span> →</button>
+            </div>
+            <p class="book-hint" data-book-hint hidden>Turn pages with the arrows, keyboard, or a swipe</p>
+        </main>
+        <footer>
+            <span>© {{ profile.name }}</span>
+            <a href="mailto:{{ profile.email }}">{{ profile.email }}</a>
+            <div class="social-links"><a href="https://www.linkedin.com/in/selome-tesfaye-deribe-3b661a18a/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://www.instagram.com/selome_t/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></div>
+            {% if not static_site %}<a href="/login?next=/edit">Manage resume ↗</a>{% endif %}
+        </footer>
+    </div>
+    <script src="{% if static_site %}./static/book.js{% else %}{{ url_for('static',filename='book.js') }}{% endif %}" defer></script>
 </body>
 </html>
