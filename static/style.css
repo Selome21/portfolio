@@ -1,13 +1,13 @@
 :root {
-    --ink: #193b35;
+    --ink: #35243e;
     --paper: #fff9ef;
     --accent: #c2185b;
     --highlight: #d4f000;
     --art: #ffdc55;
     --pink: #f7b8d0;
-    --muted: #5d7069;
-    --line: #e7dfd0;
-    --serif: Georgia, serif
+    --muted: #5c4d64;
+    --line: #e8dfea;
+    --serif: "Fraunces", Georgia, serif
 }
 
 * {
@@ -23,7 +23,7 @@ body {
     margin: 0;
     background: var(--paper);
     color: var(--ink);
-    font-family: Manrope, sans-serif
+    font-family: "DM Sans", sans-serif
 }
 
 a {
@@ -133,7 +133,7 @@ h2 i {
     background: var(--ink);
     color: var(--paper);
     border: 0;
-    font: 700 12px Manrope;
+    font: 700 12px "DM Sans", sans-serif;
     cursor: pointer;
     transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease
 }
@@ -142,7 +142,7 @@ h2 i {
     background: var(--accent);
     color: #fff;
     transform: translateY(-3px);
-    box-shadow: 0 10px 24px #193b3526
+    box-shadow: 0 10px 24px #35243e26
 }
 
 .hero-photo {
@@ -268,7 +268,7 @@ h2 {
 
 .joy-tags span {
     padding: 7px 11px;
-    border: 1px solid #193b3540;
+    border: 1px solid #35243e40;
     border-radius: 999px;
     color: var(--ink);
     font: 500 10px "DM Mono", monospace
@@ -335,7 +335,7 @@ h2 {
     position: relative;
     z-index: 1;
     transform: translateY(-5px);
-    box-shadow: 0 14px 28px #193b3520
+    box-shadow: 0 14px 28px #35243e20
 }
 
 .project.clean-photo {
@@ -428,7 +428,7 @@ footer {
     border-bottom: 1px solid var(--line);
     background: transparent;
     outline: 0;
-    font: 14px Manrope;
+    font: 14px "DM Sans", sans-serif;
     color: var(--ink)
 }
 
