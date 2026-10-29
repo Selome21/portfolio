@@ -45,9 +45,9 @@ DEFAULT_PROFILE = {
     "profile_image": "",
     "ink_color": "#193b35",
     "paper_color": "#fff9ef",
-    "accent_color": "#c74635",
-    "highlight_color": "#ffd166",
-    "art_color": "#9fe3d0",
+    "accent_color": "#c2185b",
+    "highlight_color": "#d4f000",
+    "art_color": "#ffdc55",
 }
 
 DEFAULT_ENTRIES = [
