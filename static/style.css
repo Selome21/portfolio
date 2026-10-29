@@ -377,6 +377,15 @@ footer {
     color: var(--muted)
 }
 
+.social-links {
+    display: flex;
+    gap: 18px
+}
+
+.social-links a:hover {
+    color: var(--accent)
+}
+
 .editor {
     padding: 85px 0
 }
