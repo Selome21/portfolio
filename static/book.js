@@ -23,9 +23,29 @@
     let touchStartX = null;
     let touchStartY = null;
     let suppressClickUntil = 0;
+    let turnInProgress = false;
+    let pendingNavigation = null;
     let turnTimeout;
 
-    function renderSpread(index, direction, pageId) {
+    function clearTurnSheet() {
+        window.clearTimeout(turnTimeout);
+        book.querySelector(".page-turn-sheet")?.remove();
+        spreads.forEach((spread) => {
+            spread.classList.remove("is-turn-underlay", "is-turn-forward-underlay", "is-turn-back-underlay");
+        });
+        turnInProgress = false;
+    }
+
+    function focusPageHeading(pageId) {
+        const heading = document.querySelector(`#${CSS.escape(pageId)} h1, #${CSS.escape(pageId)} h2`);
+        if (heading) {
+            heading.focus({ preventScroll: true });
+            heading.scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "nearest" });
+        }
+    }
+
+    function renderSpread(index, pageId) {
+        clearTurnSheet();
         activeSpread = Math.max(0, Math.min(index, spreads.length - 1));
 
         spreads.forEach((spread, spreadIndex) => {
@@ -33,12 +53,9 @@
             spread.hidden = !active;
             spread.inert = !active;
             spread.setAttribute("aria-hidden", String(!active));
-            spread.classList.remove("is-active", "is-turning-forward", "is-turning-back");
+            spread.classList.remove("is-active");
             if (active) {
                 spread.classList.add("is-active");
-                if (!reducedMotion.matches && direction) {
-                    spread.classList.add(direction === "forward" ? "is-turning-forward" : "is-turning-back");
-                }
             }
         });
 
@@ -48,22 +65,94 @@
         const lastPage = firstPage + 1;
         status.textContent = `Spread ${activeSpread + 1} of ${spreads.length} · pages ${firstPage}–${lastPage}`;
 
-        window.clearTimeout(turnTimeout);
-        turnTimeout = window.setTimeout(() => {
-            spreads[activeSpread].classList.remove("is-turning-forward", "is-turning-back");
-        }, reducedMotion.matches ? 0 : 500);
-
         if (pageId) {
-            const heading = document.querySelector(`#${CSS.escape(pageId)} h1, #${CSS.escape(pageId)} h2`);
-            if (heading) {
-                heading.focus({ preventScroll: true });
-                heading.scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "nearest" });
-            }
+            focusPageHeading(pageId);
         }
     }
 
+    function cloneForTurn(element) {
+        const clone = element.cloneNode(true);
+        clone.removeAttribute("id");
+        clone.querySelectorAll("[id]").forEach((item) => item.removeAttribute("id"));
+        clone.setAttribute("aria-hidden", "true");
+        clone.inert = true;
+        return clone;
+    }
+
+    function animateToSpread(index, direction, pageId) {
+        const targetIndex = Math.max(0, Math.min(index, spreads.length - 1));
+        if (targetIndex === activeSpread) {
+            if (pageId) {
+                focusPageHeading(pageId);
+            }
+            return;
+        }
+        if (turnInProgress) {
+            return;
+        }
+        if (reducedMotion.matches) {
+            renderSpread(targetIndex, pageId);
+            return;
+        }
+
+        const currentSpread = spreads[activeSpread];
+        const targetSpread = spreads[targetIndex];
+        const goingForward = direction === "forward";
+        const mobileLayout = window.matchMedia("(max-width: 800px)").matches;
+        const currentPage = currentSpread.querySelector(goingForward ? ".book-page:last-child" : ".book-page:first-child");
+        const reversePage = targetSpread.querySelector(goingForward ? ".book-page:first-child" : ".book-page:last-child");
+        const sheet = document.createElement("div");
+        const front = document.createElement("div");
+        const back = document.createElement("div");
+
+        sheet.className = `page-turn-sheet ${goingForward ? "turn-forward" : "turn-back"}${mobileLayout ? " is-mobile" : ""}`;
+        sheet.setAttribute("aria-hidden", "true");
+        sheet.inert = true;
+        front.className = "page-turn-face page-turn-front";
+        back.className = "page-turn-face page-turn-back";
+        front.append(cloneForTurn(mobileLayout ? currentSpread : currentPage));
+        back.append(cloneForTurn(mobileLayout ? targetSpread : reversePage));
+        sheet.append(front, back);
+
+        turnInProgress = true;
+        pendingNavigation = null;
+        targetSpread.hidden = false;
+        targetSpread.inert = true;
+        targetSpread.setAttribute("aria-hidden", "true");
+        targetSpread.classList.add(
+            "is-turn-underlay",
+            goingForward ? "is-turn-forward-underlay" : "is-turn-back-underlay"
+        );
+        currentSpread.after(targetSpread);
+        book.append(sheet);
+        previous.disabled = true;
+        next.disabled = true;
+
+        const finishTurn = () => {
+            if (!turnInProgress) {
+                return;
+            }
+            const queued = pendingNavigation;
+            const completedPageId = queued && queued.index === targetIndex ? queued.pageId : pageId;
+            renderSpread(targetIndex, completedPageId);
+            if (queued && queued.index !== targetIndex) {
+                const nextDirection = queued.index >= activeSpread ? "forward" : "back";
+                animateToSpread(queued.index, nextDirection, queued.pageId);
+            }
+        };
+
+        sheet.addEventListener("animationend", (event) => {
+            if (event.target === sheet) {
+                finishTurn();
+            }
+        });
+        turnTimeout = window.setTimeout(finishTurn, 1100);
+    }
+
     function turn(direction) {
-        renderSpread(activeSpread + (direction === "forward" ? 1 : -1), direction);
+        if (!turnInProgress) {
+            animateToSpread(activeSpread + (direction === "forward" ? 1 : -1), direction);
+        }
     }
 
     function navigateToHash(hash, updateHistory) {
@@ -73,7 +162,12 @@
             return false;
         }
 
-        renderSpread(spreadIndex, spreadIndex >= activeSpread ? "forward" : "back", pageId);
+        const direction = spreadIndex >= activeSpread ? "forward" : "back";
+        if (turnInProgress) {
+            pendingNavigation = { index: spreadIndex, pageId };
+        } else {
+            animateToSpread(spreadIndex, direction, pageId);
+        }
         if (updateHistory) {
             window.history.pushState(null, "", `#${pageId}`);
         }
