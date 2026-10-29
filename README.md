@@ -16,4 +16,4 @@ Commit the generated `index.html` and `uploads/` files, then push them to `main`
 
 The generated page and copied images are public. The local database, `.env`, and original upload folder remain excluded from Git.
 
-The portfolio is presented as an interactive book with a 3D page-flip animation. Use the page navigation, Previous/Next buttons, arrow keys while the book is focused, or swipe on touch screens. Reduced-motion preferences are respected.
+The portfolio is presented as an interactive book with a 3D page-flip animation. Turn pages by clicking either side of the book, using the page navigation, pressing the arrow keys while the book is focused, or swiping on touch screens. Reduced-motion preferences are respected.

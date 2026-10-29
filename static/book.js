@@ -1,12 +1,10 @@
 (() => {
     const book = document.querySelector("[data-book]");
     const controls = document.querySelector("[data-book-controls]");
-    const previous = document.querySelector("[data-previous]");
-    const next = document.querySelector("[data-next]");
     const status = document.querySelector("[data-page-status]");
     const hint = document.querySelector("[data-book-hint]");
 
-    if (!book || !controls || !previous || !next || !status || !hint) {
+    if (!book || !controls || !status || !hint) {
         return;
     }
 
@@ -59,8 +57,6 @@
             }
         });
 
-        previous.disabled = activeSpread === 0;
-        next.disabled = activeSpread === spreads.length - 1;
         const firstPage = activeSpread * 2 + 1;
         const lastPage = firstPage + 1;
         status.textContent = `Spread ${activeSpread + 1} of ${spreads.length} · pages ${firstPage}–${lastPage}`;
@@ -125,9 +121,6 @@
         );
         currentSpread.after(targetSpread);
         book.append(sheet);
-        previous.disabled = true;
-        next.disabled = true;
-
         const finishTurn = () => {
             if (!turnInProgress) {
                 return;
@@ -185,9 +178,6 @@
     if (!navigateToHash(initialHash, false)) {
         renderSpread(0);
     }
-
-    previous.addEventListener("click", () => turn("back"));
-    next.addEventListener("click", () => turn("forward"));
 
     document.querySelectorAll('a[href^="#page-"]').forEach((link) => {
         link.addEventListener("click", (event) => {
