@@ -43,7 +43,7 @@ DEFAULT_PROFILE = {
     "skills": "Python, JavaScript, C++, C#, Java, Angular, React, MySQL, MongoDB, Docker",
     "languages": "English · Amharic · Korean (TOPIK Level 5)",
     "profile_image": "",
-    "ink_color": "#193b35",
+    "ink_color": "#35243e",
     "paper_color": "#fff9ef",
     "accent_color": "#c2185b",
     "highlight_color": "#d4f000",
