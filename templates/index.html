@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>{{ profile.name }} — Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% if static_site %}./static/style.css{% else %}{{ url_for('static',filename='style.css') }}{% endif %}">
 </head>
 <body style="{% for key,value in theme.items() %}{{ key }}:{{ value }};{% endfor %}"><div class="shell">
