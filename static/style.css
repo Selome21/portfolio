@@ -658,8 +658,10 @@ textarea {
     overflow-y: auto;
     padding: clamp(26px, 4vw, 54px) clamp(26px, 4vw, 54px) 72px;
     background: #fffdf8;
+    cursor: ew-resize;
     scrollbar-color: var(--accent) transparent;
-    scrollbar-width: thin
+    scrollbar-width: thin;
+    touch-action: pan-y
 }
 
 .book-page + .book-page {
@@ -695,6 +697,7 @@ textarea {
     width: 100%;
     min-height: 220px;
     aspect-ratio: 1.6;
+    background-position: center 28%;
     margin-top: auto
 }
 
