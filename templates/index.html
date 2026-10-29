@@ -37,7 +37,7 @@
                     </section>
                     <section class="book-page" id="page-about" aria-labelledby="about-title">
                         <p class="page-kicker">01 / A little about me</p>
-                        <h2 id="about-title">Making technology feel more <i>human.</i></h2>
+                        <h2 id="about-title">Making technology feel more like <i>Me.</i></h2>
                         <p class="copy">{{ profile.about }}</p>
                         <p class="copy">My Orthodox Christian faith, Ethiopian roots, and life in South Korea shape how I connect with people, languages, and ideas across cultures.</p>
                         <div class="facts">
@@ -64,7 +64,7 @@
                     </section>
                     <section class="book-page" id="page-education" aria-labelledby="education-title">
                         <p class="page-kicker">03 / The learning</p>
-                        <h2 id="education-title">Curiosity is a <i>practice.</i></h2>
+                        <h2 id="education-title">Curiosity is <i>Innovation.</i></h2>
                         <div class="entries">{% for item in entries if item.category == 'education' %}<article><small>{{ item.period }}</small><div><h3>{{ item.title }}</h3><strong>{{ item.organization }}</strong><p>{{ item.description }}</p></div></article>{% endfor %}</div>
                         <span class="page-number">04</span>
                     </section>
@@ -72,7 +72,7 @@
                 <div class="book-spread">
                     <section class="book-page project-page" id="page-projects" aria-labelledby="projects-title">
                         <p class="page-kicker">04 / Things I’ve made</p>
-                        <h2 id="projects-title">A growing collection of <i>ideas.</i></h2>
+                        <h2 id="projects-title">Ideas so far.</h2>
                         <div class="projects">{% for project in projects %}<article class="project{% if project.image %} clean-photo{% endif %}"{% if project.image %} style="background-image:url('{% if static_site %}{{ project.image }}{% else %}{{ url_for('static',filename=project.image) }}{% endif %}')"{% endif %}><a href="{{ project.url }}" target="_blank" rel="noopener noreferrer">View ↗</a><h3>{{ project.title }}</h3><p>{{ project.description }}</p><small>{{ project.stack }}</small></article>{% else %}<p>Add future projects from the editor.</p>{% endfor %}</div>
                         <span class="page-number">05</span>
                     </section>
@@ -88,9 +88,7 @@
                 </div>
             </div>
             <div class="book-controls" data-book-controls hidden>
-                <button class="page-button" type="button" data-previous aria-label="Turn to previous spread">← <span>Previous</span></button>
                 <p class="page-status" aria-live="polite" data-page-status>Spread 1 of 3 · pages 1–2</p>
-                <button class="page-button" type="button" data-next aria-label="Turn to next spread"><span>Next</span> →</button>
             </div>
             <p class="book-hint" data-book-hint hidden>Click left/right sides · swipe left/right or use the keyboard arrows</p>
         </main>
