@@ -117,7 +117,7 @@ def login_required(view):
 def home():
     profile, entries, projects = data()
     theme = {"--ink": profile["ink_color"], "--paper": profile["paper_color"], "--accent": profile["accent_color"], "--highlight": profile["highlight_color"], "--art": profile["art_color"]}
-    return render_template("index.html", profile=profile, entries=entries, projects=projects, theme=theme)
+    return render_template("index.html", profile=profile, entries=entries, projects=projects, theme=theme, static_site=False)
 
 
 @app.route("/login", methods=["GET", "POST"])
