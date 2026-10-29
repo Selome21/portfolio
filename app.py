@@ -51,8 +51,8 @@ DEFAULT_PROFILE = {
 }
 
 DEFAULT_ENTRIES = [
-    ("experience", "Licensed Financial Consultant", "Shinhan Life (Freelancer)", "Summer 2026 – Present", ""),
     ("experience", "Research and Development Professional", "TreeM", "Fall 2026 – Present", ""),
+    ("experience", "Financial Consultant", "Shinhan Life (Freelancer)", "Summer 2026 – Present", ""),
     ("experience", "Research Assistant", "Sungkyunkwan University Communication Lab", "Fall 2023 – February 2026", "Supported research work in an electrical and computer engineering lab."),
     ("experience", "Project Assistant", "Byucksan Power", "July 2021 – January 2022", "Supported project operations as a project assistant."),
     ("experience", "Project Assistant · Intern", "Nuri Telecom (NuriFlex)", "March – May 2021", "Supported projects as an intern project assistant."),
