@@ -1,11 +1,11 @@
 :root {
-    --ink: #172320;
-    --paper: #f5f4ef;
-    --accent: #ef785f;
-    --highlight: #d8f276;
-    --art: #cbc6fa;
-    --muted: #66716b;
-    --line: #d4d9d1;
+    --ink: #193b35;
+    --paper: #fff9ef;
+    --accent: #c74635;
+    --highlight: #ffd166;
+    --art: #9fe3d0;
+    --muted: #5d7069;
+    --line: #e7dfd0;
     --serif: Georgia, serif
 }
 
@@ -14,7 +14,8 @@
 }
 
 html {
-    scroll-behavior: smooth
+    scroll-behavior: smooth;
+    scroll-padding-top: 24px
 }
 
 body {
@@ -26,7 +27,14 @@ body {
 
 a {
     color: inherit;
-    text-decoration: none
+    text-decoration: none;
+    transition: color .2s ease, background-color .2s ease, transform .2s ease
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 4px
 }
 
 .shell {
@@ -125,7 +133,15 @@ h2 i {
     color: var(--paper);
     border: 0;
     font: 700 12px Manrope;
-    cursor: pointer
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease
+}
+
+.button:hover {
+    background: var(--accent);
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px #193b3526
 }
 
 .hero-photo {
@@ -200,6 +216,63 @@ h2 {
     text-transform: uppercase
 }
 
+.joy-note {
+    position: relative;
+    overflow: hidden;
+    margin-top: 42px;
+    padding: 28px 30px;
+    background: var(--highlight);
+    border-radius: 4px 38px 4px 4px
+}
+
+.joy-note::after {
+    position: absolute;
+    top: -34px;
+    right: -24px;
+    width: 110px;
+    aspect-ratio: 1;
+    border: 18px solid #fff9ef66;
+    border-radius: 50%;
+    content: ""
+}
+
+.joy-kicker {
+    color: var(--ink);
+    font: 500 10px "DM Mono", monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase
+}
+
+.joy-note h3 {
+    max-width: 550px;
+    margin: 12px 0 8px;
+    font-size: clamp(1.35rem, 3vw, 2rem);
+    letter-spacing: -.04em
+}
+
+.joy-note p {
+    max-width: 620px;
+    margin: 0;
+    color: var(--ink);
+    font-size: 13px;
+    line-height: 1.7
+}
+
+.joy-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px
+}
+
+.joy-tags span {
+    padding: 7px 11px;
+    border: 1px solid #193b3540;
+    border-radius: 999px;
+    color: var(--ink);
+    font: 500 10px "DM Mono", monospace
+}
+
 .entries {
     max-width: 900px
 }
@@ -209,7 +282,13 @@ h2 {
     grid-template-columns: 180px 1fr;
     gap: 30px;
     border-top: 1px solid var(--line);
-    padding: 25px 0
+    padding: 25px 0;
+    transition: padding-left .2s ease, border-color .2s ease
+}
+
+.entries article:hover {
+    padding-left: 8px;
+    border-color: var(--accent)
 }
 
 .entries h3 {
@@ -239,11 +318,23 @@ h2 {
     padding: 24px;
     background: var(--highlight);
     display: flex;
-    flex-direction: column
+    flex-direction: column;
+    transition: transform .22s ease, box-shadow .22s ease
 }
 
 .project:nth-child(2n) {
-    background: var(--highlight)
+    background: var(--art)
+}
+
+.project:nth-child(3n) {
+    background: #f6b8a8
+}
+
+.project:hover {
+    position: relative;
+    z-index: 1;
+    transform: translateY(-5px);
+    box-shadow: 0 14px 28px #193b3520
 }
 
 .project.clean-photo {
@@ -256,6 +347,11 @@ h2 {
 .project a {
     align-self: flex-end;
     font-weight: bold
+}
+
+.project a:hover {
+    color: var(--accent);
+    transform: translateX(3px)
 }
 
 .project h3 {
@@ -450,5 +546,16 @@ textarea {
         flex-wrap: wrap;
         padding: 25px 0;
         gap: 15px
+    }
+}
+
+@media(prefers-reduced-motion:reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important
     }
 }
