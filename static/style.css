@@ -1,9 +1,10 @@
 :root {
     --ink: #193b35;
     --paper: #fff9ef;
-    --accent: #c74635;
-    --highlight: #ffd166;
-    --art: #9fe3d0;
+    --accent: #c2185b;
+    --highlight: #d4f000;
+    --art: #ffdc55;
+    --pink: #f7b8d0;
     --muted: #5d7069;
     --line: #e7dfd0;
     --serif: Georgia, serif
@@ -327,7 +328,7 @@ h2 {
 }
 
 .project:nth-child(3n) {
-    background: #f6b8a8
+    background: var(--pink)
 }
 
 .project:hover {
