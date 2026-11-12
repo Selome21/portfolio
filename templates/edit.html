@@ -9,7 +9,9 @@
             <header><a class="logo" href="/">ST <span>Resume editor</span></a><a class="manage" href="/">View portfolio ↗</a>
             </header>
             <main class="editor"><p class="eyebrow">Private local editor</p>
+                {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="publish-notices" role="status">{% for category,message in messages %}<p class="publish-notice {{ category }}">{{ message }}</p>{% endfor %}</div>{% endif %}{% endwith %}
                 <h1>Keep your story <i>current.</i></h1>
+                <form method="post" action="/edit/publish"><button class="button">Publish latest site to GitHub</button></form>
                 <form method="post" enctype="multipart/form-data">
                     <h2>Profile</h2>
                     <div class="form-grid">{% for field,label in [('name','Name'),('role','Role'),('tagline','Tagline'),('location','Location'),('email','Email'),('phone','Phone'),('languages','Languages'),('about','About'),('skills','Skills')] %}
@@ -39,6 +41,26 @@
                                 <input name="description" placeholder="Description">
                                 <button class="button">Add entry</button>
                             </form>
+                            <h2>Certifications &amp; licenses</h2>{% for certification in certifications %}<form class="project-form" method="post" action="/edit/certification">
+                                <input type="hidden" name="id" value="{{ certification.id }}"><div class="form-grid">
+                                <label>Type<select name="kind"><option value="certification" {% if certification.kind=='certification' %}selected{% endif %}>Certification</option><option value="license" {% if certification.kind=='license' %}selected{% endif %}>License</option></select></label>
+                                <label>Title<input name="title" value="{{ certification.title }}" required></label>
+                                <label>Issuing organization<input name="organization" value="{{ certification.organization }}" required></label>
+                                <label>Issued<input name="issued" value="{{ certification.issued }}" placeholder="Month YYYY"></label>
+                                <label>Expires<input name="expires" value="{{ certification.expires }}" placeholder="Leave blank if it does not expire"></label>
+                                <label>Credential ID<input name="credential_id" value="{{ certification.credential_id }}"></label>
+                            </div><button class="button">Save credential</button>
+                            <button formaction="/edit/delete/certification/{{ certification.id }}">Delete</button>
+                        </form>{% endfor %}<form class="project-form" method="post" action="/edit/certification">
+                            <h3>Add a certification or license</h3><div class="form-grid">
+                                <label>Type<select name="kind"><option value="certification">Certification</option><option value="license">License</option></select></label>
+                                <label>Title<input name="title" required></label>
+                                <label>Issuing organization<input name="organization" required></label>
+                                <label>Issued<input name="issued" placeholder="Month YYYY"></label>
+                                <label>Expires<input name="expires" placeholder="Leave blank if it does not expire"></label>
+                                <label>Credential ID<input name="credential_id"></label>
+                            </div><button class="button">Add credential</button>
+                        </form>
                             <h2>Projects</h2>{% for project in projects %}<form class="project-form" method="post" enctype="multipart/form-data" action="/edit/project">
                                 <input type="hidden" name="id" value="{{ project.id }}"><div class="form-grid"><label>Title<input name="title" value="{{ project.title }}">
                                 </label>

@@ -11,7 +11,7 @@ import app as portfolio
 
 
 def build():
-    profile, entries, projects = portfolio.data()
+    profile, entries, projects, certifications = portfolio.data()
     theme = {
         "--ink": profile["ink_color"],
         "--paper": profile["paper_color"],
@@ -50,6 +50,7 @@ def build():
             profile=profile,
             entries=entries,
             projects=projects,
+            certifications=certifications,
             theme=theme,
             static_site=True,
         )

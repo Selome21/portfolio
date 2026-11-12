@@ -1,10 +1,12 @@
 import os
 import sqlite3
+import subprocess
 import uuid
+from datetime import datetime
 from functools import wraps
 from pathlib import Path
 
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 from werkzeug.utils import secure_filename
 
 
@@ -31,6 +33,7 @@ if not ADMIN_USERNAME or not ADMIN_PASSWORD:
 DATABASE = Path(__file__).with_name("portfolio.db")
 UPLOAD_FOLDER = Path(__file__).parent / "static" / "uploads"
 ALLOWED_IMAGES = {"png", "jpg", "jpeg", "gif", "webp"}
+PUBLIC_SITE_PATHS = ("index.html", "static/style.css", "static/book.js", "uploads")
 
 DEFAULT_PROFILE = {
     "name": "Selome Tesfaye Deribe",
@@ -63,6 +66,56 @@ DEFAULT_ENTRIES = [
     ("education", "Disaster Engineering and Fire Fighting", "Kangwon National University", "Winter 2022 – Summer 2023", "Scholarship student"),
 ]
 
+DEFAULT_CERTIFICATIONS = [
+    {
+        "kind": "certification",
+        "title": "IAB Digital Marketing and Media Foundations Certification",
+        "organization": "Google Digital Garage",
+        "issued": "December 2020",
+        "credential_id": "59A J8C KWT",
+    },
+    {
+        "kind": "certification",
+        "title": "Digital Artists on Target-Oriented Graphics Design",
+        "organization": "Share Plus",
+        "issued": "January 2022",
+    },
+    {
+        "kind": "certification",
+        "title": "Training and Development Program for Korean Language and Cultural Experts / Korean Language Experts",
+        "organization": "KOICA & Hallym University",
+        "issued": "November 2020",
+    },
+    {
+        "kind": "certification",
+        "title": "Official TOPIK Score",
+        "organization": "National Institute for International Education (NIIED)",
+        "issued": "October 2025",
+        "credential_id": "0364583305630020",
+    },
+    {
+        "kind": "certification",
+        "title": "Claude Academy: Model Context Protocol: Advanced Topics",
+        "organization": "Anthropic",
+        "issued": "October 2026",
+        "credential_id": "fcb74d0a3f110686edbf42cade3ccb6e",
+    },
+    {
+        "kind": "certification",
+        "title": "TOEIC",
+        "organization": "ETS한국TOEIC위원회",
+        "issued": "July 2026",
+        "expires": "July 2028",
+        "credential_id": "150263",
+    },
+    {
+        "kind": "certification",
+        "title": "AWS Developer – Associate",
+        "organization": "Amazon Web Services (AWS)",
+        "issued": "October 2026",
+    },
+]
+
 
 def db():
     connection = sqlite3.connect(DATABASE)
@@ -73,14 +126,55 @@ def db():
 def initialize():
     UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
     connection = db()
+    certifications_table_exists = connection.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='certifications'"
+    ).fetchone()
     connection.execute("CREATE TABLE IF NOT EXISTS profile (id INTEGER PRIMARY KEY CHECK(id=1), " + ", ".join(f"{key} TEXT" for key in DEFAULT_PROFILE) + ")")
     connection.execute("CREATE TABLE IF NOT EXISTS entries (id INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, title TEXT, organization TEXT, period TEXT, description TEXT)")
     connection.execute("CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, url TEXT, stack TEXT, image TEXT DEFAULT '')")
+    connection.execute("CREATE TABLE IF NOT EXISTS certifications (id INTEGER PRIMARY KEY AUTOINCREMENT, kind TEXT NOT NULL DEFAULT 'certification', title TEXT NOT NULL, organization TEXT NOT NULL, issued TEXT NOT NULL DEFAULT '', expires TEXT NOT NULL DEFAULT '', credential_id TEXT NOT NULL DEFAULT '')")
     if connection.execute("SELECT COUNT(*) FROM profile").fetchone()[0] == 0:
         fields = ", ".join(DEFAULT_PROFILE)
         connection.execute(f"INSERT INTO profile (id, {fields}) VALUES (1, {','.join('?' for _ in DEFAULT_PROFILE)})", list(DEFAULT_PROFILE.values()))
     if connection.execute("SELECT COUNT(*) FROM entries").fetchone()[0] == 0:
         connection.executemany("INSERT INTO entries (category,title,organization,period,description) VALUES (?,?,?,?,?)", DEFAULT_ENTRIES)
+    if not certifications_table_exists:
+        connection.executemany(
+            "INSERT INTO certifications (kind,title,organization,issued,expires,credential_id) VALUES (:kind,:title,:organization,:issued,:expires,:credential_id)",
+            [
+                {
+                    "expires": "",
+                    "credential_id": "",
+                    **certification,
+                }
+                for certification in DEFAULT_CERTIFICATIONS
+            ],
+        )
+    else:
+        merged_titles = (
+            "Training and Development Program for Korean Language and Cultural Experts",
+            "Korean Language Experts",
+        )
+        merged_rows = connection.execute(
+            "SELECT id, issued FROM certifications WHERE title IN (?,?) ORDER BY id",
+            merged_titles,
+        ).fetchall()
+        if merged_rows:
+            issued = next((row["issued"] for row in merged_rows if row["issued"]), "")
+            connection.execute(
+                "UPDATE certifications SET kind='certification',title=?,organization=?,issued=? WHERE id=?",
+                (
+                    "Training and Development Program for Korean Language and Cultural Experts / Korean Language Experts",
+                    "KOICA & Hallym University",
+                    issued,
+                    merged_rows[0]["id"],
+                ),
+            )
+            if len(merged_rows) > 1:
+                connection.executemany(
+                    "DELETE FROM certifications WHERE id=?",
+                    [(row["id"],) for row in merged_rows[1:]],
+                )
     connection.commit()
     connection.close()
 
@@ -90,8 +184,120 @@ def data():
     profile = connection.execute("SELECT * FROM profile WHERE id=1").fetchone()
     entries = connection.execute("SELECT * FROM entries ORDER BY id").fetchall()
     projects = connection.execute("SELECT * FROM projects ORDER BY id DESC").fetchall()
+    certifications = connection.execute("SELECT * FROM certifications").fetchall()
     connection.close()
-    return profile, entries, projects
+    date_formats = ("%B %Y", "%b %Y", "%Y-%m", "%Y-%m-%d", "%Y")
+
+    def certification_date(certification):
+        issued = certification["issued"].strip()
+        for date_format in date_formats:
+            try:
+                return datetime.strptime(issued, date_format)
+            except ValueError:
+                continue
+        return datetime.min
+
+    certifications = sorted(
+        certifications,
+        key=lambda certification: (certification_date(certification), certification["id"]),
+        reverse=True,
+    )
+    return profile, entries, projects, certifications
+
+
+def publish_static_site():
+    try:
+        from build_static import build
+
+        build()
+    except (OSError, ValueError) as error:
+        return False, f"Saved locally, but the static site could not be built: {error}"
+
+    branch = os.environ.get("PORTFOLIO_PUBLISH_BRANCH", "main")
+    remote = os.environ.get("PORTFOLIO_GIT_REMOTE", "origin")
+    git_dir = Path(__file__).parent
+    try:
+        current_branch = subprocess.run(
+            ["git", "branch", "--show-current"],
+            cwd=git_dir,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        ).stdout.strip()
+    except (OSError, subprocess.SubprocessError) as error:
+        return False, f"Saved locally, but Git could not be checked: {error}"
+    if current_branch != branch:
+        return False, f"Saved locally, but auto-publishing requires the {branch} branch (currently on {current_branch or 'detached HEAD'})."
+
+    try:
+        environment = os.environ.copy()
+        environment["GIT_TERMINAL_PROMPT"] = "0"
+        environment["GCM_INTERACTIVE"] = "never"
+        stage = subprocess.run(
+            ["git", "add", "--", *PUBLIC_SITE_PATHS],
+            cwd=git_dir,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        if stage.returncode:
+            details = stage.stderr.strip() or stage.stdout.strip()
+            return False, f"Saved locally, but Git could not prepare the website update: {details}"
+
+        changes = subprocess.run(
+            ["git", "diff", "--cached", "--quiet", "--", *PUBLIC_SITE_PATHS],
+            cwd=git_dir,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        if changes.returncode not in (0, 1):
+            details = changes.stderr.strip() or changes.stdout.strip()
+            return False, f"Saved locally, but Git could not compare the website files: {details}"
+        if changes.returncode == 1:
+            commit = subprocess.run(
+                [
+                    "git",
+                    "commit",
+                    "-m",
+                    "Publish portfolio updates",
+                    "--only",
+                    "--",
+                    *PUBLIC_SITE_PATHS,
+                ],
+                cwd=git_dir,
+                env=environment,
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            if commit.returncode:
+                details = commit.stderr.strip() or commit.stdout.strip()
+                return False, f"Saved locally, but Git could not commit the website update: {details}"
+
+        push = subprocess.run(
+            ["git", "push", remote, branch],
+            cwd=git_dir,
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=90,
+        )
+        if push.returncode:
+            details = push.stderr.strip() or push.stdout.strip()
+            return False, f"Saved locally, but GitHub did not accept the update: {details}"
+    except (OSError, subprocess.SubprocessError) as error:
+        return False, f"Saved locally, but the GitHub update failed: {error}"
+
+    return True, "Saved and pushed to GitHub. GitHub Pages may take a few minutes to update."
+
+
+def publish_after_save():
+    published, message = publish_static_site()
+    flash(message, "success" if published else "error")
 
 
 def upload(file):
@@ -117,9 +323,9 @@ def login_required(view):
 
 @app.route("/")
 def home():
-    profile, entries, projects = data()
+    profile, entries, projects, certifications = data()
     theme = {"--ink": profile["ink_color"], "--paper": profile["paper_color"], "--accent": profile["accent_color"], "--highlight": profile["highlight_color"], "--art": profile["art_color"]}
-    return render_template("index.html", profile=profile, entries=entries, projects=projects, theme=theme, static_site=False)
+    return render_template("index.html", profile=profile, entries=entries, projects=projects, certifications=certifications, theme=theme, static_site=False)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -152,10 +358,11 @@ def edit():
         connection.execute(f"UPDATE profile SET {assignments} WHERE id=1", values)
         connection.commit()
         connection.close()
+        publish_after_save()
         return redirect(url_for("edit"))
     connection.close()
-    profile, entries, projects = data()
-    return render_template("edit.html", profile=profile, entries=entries, projects=projects)
+    profile, entries, projects, certifications = data()
+    return render_template("edit.html", profile=profile, entries=entries, projects=projects, certifications=certifications)
 
 
 @app.post("/edit/entry")
@@ -169,6 +376,39 @@ def save_entry():
     else:
         connection.execute("INSERT INTO entries (category,title,organization,period,description) VALUES (?,?,?,?,?)", values)
     connection.commit(); connection.close()
+    publish_after_save()
+    return redirect(url_for("edit"))
+
+
+@app.post("/edit/certification")
+@login_required
+def save_certification():
+    kind = request.form.get("kind", "certification")
+    if kind not in {"certification", "license"}:
+        return "Invalid credential type.", 400
+    values = [
+        kind,
+        request.form.get("title", "").strip(),
+        request.form.get("organization", "").strip(),
+        request.form.get("issued", "").strip(),
+        request.form.get("expires", "").strip(),
+        request.form.get("credential_id", "").strip(),
+    ]
+    connection = db()
+    certification_id = request.form.get("id")
+    if certification_id:
+        connection.execute(
+            "UPDATE certifications SET kind=?,title=?,organization=?,issued=?,expires=?,credential_id=? WHERE id=?",
+            values + [certification_id],
+        )
+    else:
+        connection.execute(
+            "INSERT INTO certifications (kind,title,organization,issued,expires,credential_id) VALUES (?,?,?,?,?,?)",
+            values,
+        )
+    connection.commit()
+    connection.close()
+    publish_after_save()
     return redirect(url_for("edit"))
 
 
@@ -187,14 +427,25 @@ def save_project():
     else:
         connection.execute("INSERT INTO projects (title,description,url,stack,image) VALUES (?,?,?,?,?)", values + [image])
     connection.commit(); connection.close()
+    publish_after_save()
     return redirect(url_for("edit"))
 
 
 @app.post("/edit/delete/<kind>/<int:item_id>")
 @login_required
 def delete_item(kind, item_id):
-    table = "projects" if kind == "project" else "entries"
+    table = {"project": "projects", "entry": "entries", "certification": "certifications"}.get(kind)
+    if not table:
+        return "Unknown item type.", 404
     connection = db(); connection.execute(f"DELETE FROM {table} WHERE id=?", (item_id,)); connection.commit(); connection.close()
+    publish_after_save()
+    return redirect(url_for("edit"))
+
+
+@app.post("/edit/publish")
+@login_required
+def publish():
+    publish_after_save()
     return redirect(url_for("edit"))
 
 

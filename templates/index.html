@@ -16,12 +16,18 @@
                 <a href="#page-about">About</a>
                 <a href="#page-experience">Experience</a>
                 <a href="#page-education">Education</a>
+                <a href="#certifications-title">Certifications</a>
                 <a href="#page-projects">Projects</a>
             </nav>
             {% if not static_site %}<a class="manage" href="/login">Admin Login</a>{% endif %}
         </header>
         <main>
             <div class="book" data-book aria-label="Interactive portfolio book" tabindex="0">
+                <div class="book-spread single-page cover-spread front-cover-spread">
+                    <section class="book-page book-jacket book-front-cover" id="page-front-cover" aria-label="Front cover">
+                        <h1>Selome</h1>
+                    </section>
+                </div>
                 <div class="book-spread">
                     <section class="book-page book-cover" id="page-home" aria-labelledby="book-title">
                         <div class="cover-copy">
@@ -70,14 +76,22 @@
                     </section>
                 </div>
                 <div class="book-spread">
-                    <section class="book-page project-page" id="page-projects" aria-labelledby="projects-title">
-                        <p class="page-kicker">04 / Things I’ve made</p>
-                        <h2 id="projects-title">Ideas so far.</h2>
-                        <div class="projects">{% for project in projects %}<article class="project{% if project.image %} clean-photo{% endif %}"{% if project.image %} style="background-image:url('{% if static_site %}{{ project.image }}{% else %}{{ url_for('static',filename=project.image) }}{% endif %}')"{% endif %}><a href="{{ project.url }}" target="_blank" rel="noopener noreferrer">View ↗</a><h3>{{ project.title }}</h3><p>{{ project.description }}</p><small>{{ project.stack }}</small></article>{% else %}<p>Add future projects from the editor.</p>{% endfor %}</div>
+                    <section class="book-page" id="page-certifications" aria-labelledby="certifications-title">
+                        <p class="page-kicker">04 / Credentials</p>
+                        <h2 id="certifications-title" tabindex="-1">Certifications &amp; Licenses</h2>
+                        <div class="entries certifications">{% for certification in certifications %}<article><small>{{ certification.kind|capitalize }}{% if certification.issued %} · Issued {{ certification.issued }}{% endif %}</small><div><h3>{{ certification.title }}</h3><strong>{{ certification.organization }}</strong>{% if certification.expires %}<p>Expires {{ certification.expires }}</p>{% endif %}{% if certification.credential_id %}<p>Credential ID: {{ certification.credential_id }}</p>{% endif %}</div></article>{% endfor %}</div>
                         <span class="page-number">05</span>
                     </section>
+                    <section class="book-page project-page" id="page-projects" aria-labelledby="projects-title">
+                        <p class="page-kicker">05 / Things I’ve made</p>
+                        <h2 id="projects-title">Ideas so far.</h2>
+                        <div class="projects">{% for project in projects %}<article class="project{% if project.image %} clean-photo{% endif %}"{% if project.image %} style="background-image:url('{% if static_site %}{{ project.image }}{% else %}{{ url_for('static',filename=project.image) }}{% endif %}')"{% endif %}><a href="{{ project.url }}" target="_blank" rel="noopener noreferrer">View ↗</a><h3>{{ project.title }}</h3><p>{{ project.description }}</p><small>{{ project.stack }}</small></article>{% else %}<p>Add future projects from the editor.</p>{% endfor %}</div>
+                        <span class="page-number">06</span>
+                    </section>
+                </div>
+                <div class="book-spread">
                     <section class="book-page closing-page" id="page-contact" aria-labelledby="contact-title">
-                        <p class="page-kicker">05 / The next chapter</p>
+                        <p class="page-kicker">06 / The next chapter</p>
                         <div class="closing-art" aria-hidden="true"><span>✳</span><span>✦</span><span>✳</span></div>
                         <h2 id="contact-title">Let’s make something <i>meaningful.</i></h2>
                         <p class="copy">Have an idea, an opportunity, or a favorite cafe to recommend? I’d love to hear from you.</p>
@@ -86,9 +100,14 @@
                         <span class="page-number">06</span>
                     </section>
                 </div>
+                <div class="book-spread single-page cover-spread back-cover-spread">
+                    <section class="book-page book-jacket book-back-cover" id="page-back-cover" aria-label="Back cover">
+                        <h2>Bye</h2>
+                    </section>
+                </div>
             </div>
             <div class="book-controls" data-book-controls hidden>
-                <p class="page-status" aria-live="polite" data-page-status>Spread 1 of 3 · pages 1–2</p>
+                <p class="page-status" aria-live="polite" data-page-status> Pages 1–2</p>
             </div>
             <p class="book-hint" data-book-hint hidden>Click left/right sides · swipe left/right or use the keyboard arrows</p>
         </main>
