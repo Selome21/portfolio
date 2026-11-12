@@ -5,6 +5,7 @@ import uuid
 from datetime import datetime
 from functools import wraps
 from pathlib import Path
+from urllib.parse import urlparse
 
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from werkzeug.utils import secure_filename
@@ -66,6 +67,23 @@ DEFAULT_ENTRIES = [
     ("education", "Disaster Engineering and Fire Fighting", "Kangwon National University", "Winter 2022 – Summer 2023", "Scholarship student"),
 ]
 
+NEW_CERTIFICATIONS = [
+    {
+        "kind": "certification",
+        "title": "Introduction to Cybersecurity",
+        "organization": "Cisco",
+        "issued": "April 2024",
+        "credential_url": "https://www.credly.com/badges/c019aaf9-95b5-4518-8194-8ed917b479c3/linked_in_profile",
+    },
+    {
+        "kind": "certification",
+        "title": "AWS SimuLearn - Cloud Practitioner - Training Badge",
+        "organization": "Amazon Web Services (AWS)",
+        "issued": "November 2026",
+        "credential_url": "https://www.credly.com/badges/556b8735-9a57-4886-964c-87744285fe92/linked_in_profile",
+    },
+]
+
 DEFAULT_CERTIFICATIONS = [
     {
         "kind": "certification",
@@ -114,6 +132,7 @@ DEFAULT_CERTIFICATIONS = [
         "organization": "Amazon Web Services (AWS)",
         "issued": "October 2026",
     },
+    *NEW_CERTIFICATIONS,
 ]
 
 
@@ -132,7 +151,25 @@ def initialize():
     connection.execute("CREATE TABLE IF NOT EXISTS profile (id INTEGER PRIMARY KEY CHECK(id=1), " + ", ".join(f"{key} TEXT" for key in DEFAULT_PROFILE) + ")")
     connection.execute("CREATE TABLE IF NOT EXISTS entries (id INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT, title TEXT, organization TEXT, period TEXT, description TEXT)")
     connection.execute("CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, url TEXT, stack TEXT, image TEXT DEFAULT '')")
-    connection.execute("CREATE TABLE IF NOT EXISTS certifications (id INTEGER PRIMARY KEY AUTOINCREMENT, kind TEXT NOT NULL DEFAULT 'certification', title TEXT NOT NULL, organization TEXT NOT NULL, issued TEXT NOT NULL DEFAULT '', expires TEXT NOT NULL DEFAULT '', credential_id TEXT NOT NULL DEFAULT '')")
+    connection.execute("CREATE TABLE IF NOT EXISTS certifications (id INTEGER PRIMARY KEY AUTOINCREMENT, kind TEXT NOT NULL DEFAULT 'certification', title TEXT NOT NULL, organization TEXT NOT NULL, issued TEXT NOT NULL DEFAULT '', expires TEXT NOT NULL DEFAULT '', credential_id TEXT NOT NULL DEFAULT '', credential_url TEXT NOT NULL DEFAULT '')")
+    certification_columns = {
+        row["name"] for row in connection.execute("PRAGMA table_info(certifications)")
+    }
+    if "credential_url" not in certification_columns:
+        connection.execute(
+            "ALTER TABLE certifications ADD COLUMN credential_url TEXT NOT NULL DEFAULT ''"
+        )
+        for certification in NEW_CERTIFICATIONS:
+            exists = connection.execute(
+                "SELECT 1 FROM certifications WHERE title=? LIMIT 1",
+                (certification["title"],),
+            ).fetchone()
+            if not exists:
+                connection.execute(
+                    "INSERT INTO certifications (kind,title,organization,issued,credential_url) "
+                    "VALUES (:kind,:title,:organization,:issued,:credential_url)",
+                    certification,
+                )
     if connection.execute("SELECT COUNT(*) FROM profile").fetchone()[0] == 0:
         fields = ", ".join(DEFAULT_PROFILE)
         connection.execute(f"INSERT INTO profile (id, {fields}) VALUES (1, {','.join('?' for _ in DEFAULT_PROFILE)})", list(DEFAULT_PROFILE.values()))
@@ -140,11 +177,12 @@ def initialize():
         connection.executemany("INSERT INTO entries (category,title,organization,period,description) VALUES (?,?,?,?,?)", DEFAULT_ENTRIES)
     if not certifications_table_exists:
         connection.executemany(
-            "INSERT INTO certifications (kind,title,organization,issued,expires,credential_id) VALUES (:kind,:title,:organization,:issued,:expires,:credential_id)",
+            "INSERT INTO certifications (kind,title,organization,issued,expires,credential_id,credential_url) VALUES (:kind,:title,:organization,:issued,:expires,:credential_id,:credential_url)",
             [
                 {
                     "expires": "",
                     "credential_id": "",
+                    "credential_url": "",
                     **certification,
                 }
                 for certification in DEFAULT_CERTIFICATIONS
@@ -386,6 +424,13 @@ def save_certification():
     kind = request.form.get("kind", "certification")
     if kind not in {"certification", "license"}:
         return "Invalid credential type.", 400
+    credential_url = request.form.get("credential_url", "").strip()
+    parsed_credential_url = urlparse(credential_url)
+    if credential_url and (
+        parsed_credential_url.scheme not in {"http", "https"}
+        or not parsed_credential_url.netloc
+    ):
+        return "Credential URL must use HTTP or HTTPS.", 400
     values = [
         kind,
         request.form.get("title", "").strip(),
@@ -393,17 +438,18 @@ def save_certification():
         request.form.get("issued", "").strip(),
         request.form.get("expires", "").strip(),
         request.form.get("credential_id", "").strip(),
+        credential_url,
     ]
     connection = db()
     certification_id = request.form.get("id")
     if certification_id:
         connection.execute(
-            "UPDATE certifications SET kind=?,title=?,organization=?,issued=?,expires=?,credential_id=? WHERE id=?",
+            "UPDATE certifications SET kind=?,title=?,organization=?,issued=?,expires=?,credential_id=?,credential_url=? WHERE id=?",
             values + [certification_id],
         )
     else:
         connection.execute(
-            "INSERT INTO certifications (kind,title,organization,issued,expires,credential_id) VALUES (?,?,?,?,?,?)",
+            "INSERT INTO certifications (kind,title,organization,issued,expires,credential_id,credential_url) VALUES (?,?,?,?,?,?,?)",
             values,
         )
     connection.commit()

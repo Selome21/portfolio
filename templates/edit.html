@@ -49,6 +49,7 @@
                                 <label>Issued<input name="issued" value="{{ certification.issued }}" placeholder="Month YYYY"></label>
                                 <label>Expires<input name="expires" value="{{ certification.expires }}" placeholder="Leave blank if it does not expire"></label>
                                 <label>Credential ID<input name="credential_id" value="{{ certification.credential_id }}"></label>
+                                <label>Credential URL<input type="url" name="credential_url" value="{{ certification.credential_url }}" placeholder="https://"></label>
                             </div><button class="button">Save credential</button>
                             <button formaction="/edit/delete/certification/{{ certification.id }}">Delete</button>
                         </form>{% endfor %}<form class="project-form" method="post" action="/edit/certification">
@@ -59,6 +60,7 @@
                                 <label>Issued<input name="issued" placeholder="Month YYYY"></label>
                                 <label>Expires<input name="expires" placeholder="Leave blank if it does not expire"></label>
                                 <label>Credential ID<input name="credential_id"></label>
+                                <label>Credential URL<input type="url" name="credential_url" placeholder="https://"></label>
                             </div><button class="button">Add credential</button>
                         </form>
                             <h2>Projects</h2>{% for project in projects %}<form class="project-form" method="post" enctype="multipart/form-data" action="/edit/project">

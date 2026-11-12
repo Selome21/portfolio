@@ -332,19 +332,26 @@
     let pendingNavigation = null;
     let turnTimeout;
 
+    function setBookPosition(spread) {
+        // A closed book is centred on its cover; an open book is centred on its spine.
+        book.classList.toggle("is-closed-front", spread.classList.contains("front-cover-spread"));
+        book.classList.toggle("is-closed-back", spread.classList.contains("back-cover-spread"));
+    }
+
     function clearTurnSheet() {
         window.clearTimeout(turnTimeout);
         book.querySelector(".page-turn-sheet")?.remove();
+        book.classList.remove("is-sliding");
         spreads.forEach((spread) => {
             spread.classList.remove(
                 "is-turn-underlay",
-                "is-cover-opening",
+                "is-cover-turn-underlay",
                 "is-turn-current",
                 "is-turn-forward-underlay",
                 "is-turn-back-underlay"
             );
-            spread.querySelectorAll(".is-turn-page-hidden, .is-cover-page-hidden").forEach((page) => {
-                page.classList.remove("is-turn-page-hidden", "is-cover-page-hidden");
+            spread.querySelectorAll(".is-turn-page-hidden").forEach((page) => {
+                page.classList.remove("is-turn-page-hidden");
             });
         });
         turnInProgress = false;
@@ -373,6 +380,7 @@
                 spread.classList.add("is-active");
             }
         });
+        setBookPosition(spreads[activeSpread]);
 
         const pageCount = spreads[activeSpread].querySelectorAll(".book-page").length;
         const actualFirstPage = spreads
@@ -428,9 +436,7 @@
         const targetSpread = spreads[targetIndex];
         const goingForward = direction === "forward";
         const mobileLayout = window.matchMedia("(max-width: 800px)").matches;
-        const coverTurn = currentSpread.classList.contains("cover-spread")
-            || targetSpread.classList.contains("cover-spread");
-        const fullSpreadTurn = mobileLayout && !coverTurn;
+        const fullSpreadTurn = mobileLayout;
         const currentPage = currentSpread.querySelector(goingForward ? ".book-page:last-child" : ".book-page:first-child");
         const reversePage = targetSpread.querySelector(goingForward ? ".book-page:first-child" : ".book-page:last-child");
         const sheet = document.createElement("div");
@@ -438,9 +444,6 @@
         const back = document.createElement("div");
 
         sheet.className = `page-turn-sheet ${goingForward ? "turn-forward" : "turn-back"}${fullSpreadTurn ? " is-mobile" : ""}`;
-        if (coverTurn) {
-            sheet.classList.add("is-cover-turn");
-        }
         sheet.setAttribute("aria-hidden", "true");
         sheet.inert = true;
         front.className = "page-turn-face page-turn-front";
@@ -452,16 +455,19 @@
             front.append(cloneForTurn(currentPage));
             back.append(cloneForTurn(reversePage));
         }
+        if (!fullSpreadTurn) {
+            currentPage.classList.add("is-turn-page-hidden");
+            currentSpread.classList.add("is-turn-current");
+        }
+        const coverTurn = !fullSpreadTurn && (
+            currentSpread.classList.contains("cover-spread")
+            || targetSpread.classList.contains("cover-spread")
+        );
         if (coverTurn) {
-            currentSpread.classList.add("is-turn-current");
-            currentPage.classList.add("is-turn-page-hidden");
-            targetSpread.classList.add("is-cover-opening");
-            targetSpread.querySelectorAll(".book-cover-interior, .blank-page").forEach((page) => {
-                page.classList.add("is-cover-page-hidden");
-            });
-        } else if (!fullSpreadTurn) {
-            currentPage.classList.add("is-turn-page-hidden");
-            currentSpread.classList.add("is-turn-current");
+            // The page printed on the back of the turning sheet must not be
+            // visible underneath before the sheet lands on it.
+            reversePage.classList.add("is-turn-page-hidden");
+            targetSpread.classList.add("is-cover-turn-underlay");
         }
         sheet.append(front, back);
 
@@ -476,6 +482,10 @@
         );
         currentSpread.after(targetSpread);
         book.append(sheet);
+        if (coverTurn) {
+            book.classList.add("is-sliding");
+            setBookPosition(targetSpread);
+        }
         sheet.addEventListener("animationend", (event) => {
             if (event.target === sheet) {
                 finishTurnToSpread(targetIndex, pageId);

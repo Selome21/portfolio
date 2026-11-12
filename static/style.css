@@ -592,6 +592,39 @@ textarea {
     perspective: 1800px
 }
 
+main {
+    overflow-x: clip
+}
+
+/* Closed book sits centred on its cover, then slides to centre the open spread. */
+@media (min-width: 801px) {
+    .book.is-closed-front {
+        transform: translateX(-25%)
+    }
+
+    .book.is-closed-back {
+        transform: translateX(25%)
+    }
+
+    .book.is-sliding {
+        transition: transform .72s cubic-bezier(.42, .08, .2, 1)
+    }
+}
+
+.book-spread.is-cover-turn-underlay {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none
+}
+
+.book-spread.is-cover-turn-underlay::after {
+    display: none
+}
+
+.book-spread.is-cover-turn-underlay .book-page:not(.is-turn-page-hidden) {
+    box-shadow: 0 24px 60px #35243e1c, 0 3px 8px #35243e12
+}
+
 .book-spread {
     position: relative;
     display: grid;
@@ -683,15 +716,6 @@ textarea {
     visibility: hidden
 }
 
-.book-spread.is-cover-opening .book-page.is-cover-page-hidden {
-    visibility: hidden
-}
-
-.book-spread.is-cover-opening {
-    background: transparent;
-    box-shadow: none
-}
-
 .page-turn-sheet {
     position: absolute;
     z-index: 3;
@@ -732,18 +756,6 @@ textarea {
     transform: rotateY(180deg);
     background: #fffaf1;
     box-shadow: inset -14px 0 18px #35243e18
-}
-
-.page-turn-sheet.is-cover-turn .page-turn-back {
-    background: transparent
-}
-
-.page-turn-sheet.is-cover-turn .page-turn-back > .book-page {
-    visibility: hidden
-}
-
-.page-turn-sheet.is-cover-turn .page-turn-back {
-    box-shadow: none
 }
 
 .page-turn-sheet.turn-back .page-turn-front {
@@ -836,17 +848,62 @@ textarea {
 }
 
 .book-front-cover {
-    color: #392d44;
-    background:
-        radial-gradient(ellipse at 50% 110%, #fffbe4 0 22%, transparent 22.3%),
-        linear-gradient(165deg, #fff5c3 0%, #fff0a5 58%, #fff6cf 100%);
+    color: #fff8e9;
+    background: linear-gradient(180deg, #f7c4d2 0%, #f4b39b 37%, #f8d29b 59%, #82918a 61%, #344c53 100%);
 }
 
 .book-back-cover {
-    color: #392d44;
-    background:
-        radial-gradient(ellipse at 50% 110%, #fff3b1 0 22%, transparent 22.3%),
-        linear-gradient(165deg, #f9d1df 0%, #f5bfd2 58%, #fbe0e6 100%);
+    color: #fff8e9;
+    background: linear-gradient(180deg, #303f69 0%, #655477 36%, #d17e7b 58%, #596379 61%, #273d50 100%);
+}
+
+.book-jacket.outer-cover {
+    isolation: isolate;
+}
+
+.book-jacket.outer-cover::before {
+    z-index: 1;
+    border-color: #fff8e9;
+    opacity: .48;
+}
+
+.book-jacket.outer-cover::after {
+    inset: 0;
+    display: block;
+    width: auto;
+    height: auto;
+    aspect-ratio: auto;
+    border: 0;
+    border-radius: 0;
+    background: linear-gradient(180deg, #f4a8c21c 0%, #ffd09212 48%, #253d4b14 100%);
+    opacity: 1;
+    transform: none;
+}
+
+.book-back-cover.outer-cover::after {
+    background: linear-gradient(180deg, #27365d40 0%, #54466b1c 39%, #dc887b10 57%, #182e4738 100%);
+}
+
+.cover-art {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    pointer-events: none;
+}
+
+.book-jacket.outer-cover h1,
+.book-jacket.outer-cover h2 {
+    z-index: 2;
+    color: #fff8e9;
+    text-shadow: 0 3px 22px #1c273c66;
+}
+
+.book-jacket.outer-cover h1:focus,
+.book-jacket.outer-cover h2:focus {
+    outline: none;
 }
 
 .book-page.book-jacket.book-cover-interior {
