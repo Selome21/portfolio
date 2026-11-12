@@ -687,12 +687,28 @@ textarea {
     z-index: 1
 }
 
+.book-spread.is-turn-current {
+    z-index: auto;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none
+}
+
+.book-spread.is-turn-current .book-page:not(.is-turn-page-hidden) {
+    position: relative;
+    z-index: 2
+}
+
 .book-spread.is-turn-underlay {
     position: absolute;
-    z-index: 0;
+    z-index: 1;
     inset: 0;
     display: grid !important;
     overflow: hidden
+}
+
+.book-spread.is-cover-opening {
+    visibility: hidden
 }
 
 .book-page.is-turn-page-hidden {
@@ -868,6 +884,29 @@ textarea {
     background:
         radial-gradient(ellipse at 50% 110%, #fff3b1 0 22%, transparent 22.3%),
         linear-gradient(165deg, #f9d1df 0%, #f5bfd2 58%, #fbe0e6 100%);
+}
+
+.book-jacket.book-cover-interior {
+    color: #665664;
+    background: linear-gradient(155deg, #fffdf4, #fff8e9);
+}
+
+.book-jacket.book-cover-interior::before {
+    opacity: .2;
+}
+
+.book-front-cover.book-cover-interior::after {
+    background: #ffe99b;
+    opacity: .32;
+}
+
+.book-back-cover.book-cover-interior {
+    background: linear-gradient(155deg, #fff8f4, #fff0ef);
+}
+
+.book-back-cover.book-cover-interior::after {
+    background: #f3bdd0;
+    opacity: .35;
 }
 
 .book-front-cover::after {

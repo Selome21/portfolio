@@ -187,7 +187,13 @@
         window.clearTimeout(turnTimeout);
         book.querySelector(".page-turn-sheet")?.remove();
         spreads.forEach((spread) => {
-            spread.classList.remove("is-turn-underlay", "is-turn-forward-underlay", "is-turn-back-underlay");
+            spread.classList.remove(
+                "is-turn-underlay",
+                "is-cover-opening",
+                "is-turn-current",
+                "is-turn-forward-underlay",
+                "is-turn-back-underlay"
+            );
             spread.querySelectorAll(".is-turn-page-hidden").forEach((page) => {
                 page.classList.remove("is-turn-page-hidden");
             });
@@ -260,7 +266,8 @@
         const targetSpread = spreads[targetIndex];
         const goingForward = direction === "forward";
         const mobileLayout = window.matchMedia("(max-width: 800px)").matches;
-        const fullSpreadTurn = mobileLayout;
+        const openingCover = currentSpread.classList.contains("cover-spread");
+        const fullSpreadTurn = mobileLayout && !openingCover;
         const currentPage = currentSpread.querySelector(goingForward ? ".book-page:last-child" : ".book-page:first-child");
         const reversePage = targetSpread.querySelector(goingForward ? ".book-page:first-child" : ".book-page:last-child");
         const sheet = document.createElement("div");
@@ -272,12 +279,24 @@
         sheet.inert = true;
         front.className = "page-turn-face page-turn-front";
         back.className = "page-turn-face page-turn-back";
-        front.append(cloneForTurn(fullSpreadTurn ? currentSpread : currentPage));
-        back.append(cloneForTurn(fullSpreadTurn ? targetSpread : reversePage));
-        sheet.append(front, back);
-        if (!fullSpreadTurn) {
+        if (openingCover) {
+            const cover = currentSpread.querySelector(".book-jacket");
+            const insideCover = cloneForTurn(cover);
+            insideCover.classList.add("book-cover-interior");
+            insideCover.querySelector("h1, h2")?.remove();
+            front.append(cloneForTurn(cover));
+            back.append(insideCover);
+            currentSpread.classList.add("is-turn-current");
             currentPage.classList.add("is-turn-page-hidden");
+            targetSpread.classList.add("is-cover-opening");
+        } else {
+            front.append(cloneForTurn(fullSpreadTurn ? currentSpread : currentPage));
+            back.append(cloneForTurn(fullSpreadTurn ? targetSpread : reversePage));
+            if (!fullSpreadTurn) {
+                currentPage.classList.add("is-turn-page-hidden");
+            }
         }
+        sheet.append(front, back);
 
         turnInProgress = true;
         pendingNavigation = null;
