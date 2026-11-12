@@ -1,9 +1,11 @@
+import hashlib
 import shutil
 from pathlib import Path, PurePosixPath
 
 from flask import render_template
 
 ROOT = Path(__file__).resolve().parent
+VERSIONED_ASSETS = ("style.css", "book.js", "cover-front.svg", "cover-back.svg")
 if not (ROOT / "portfolio.db").is_file():
     raise FileNotFoundError("portfolio.db is required to build the public portfolio.")
 
@@ -44,6 +46,13 @@ def build():
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / "static" / Path(*asset_path.parts), destination)
 
+    # Changes whenever the public CSS, JS, or cover art changes, so browsers
+    # never pair a new index.html with stale cached assets.
+    digest = hashlib.sha256()
+    for name in VERSIONED_ASSETS:
+        digest.update((ROOT / "static" / name).read_bytes())
+    asset_version = digest.hexdigest()[:10]
+
     with portfolio.app.test_request_context("/"):
         html = render_template(
             "index.html",
@@ -53,6 +62,7 @@ def build():
             certifications=certifications,
             theme=theme,
             static_site=True,
+            asset_version=asset_version,
         )
 
     html = "\n".join(line.rstrip() for line in html.splitlines()) + "\n"

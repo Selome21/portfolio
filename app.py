@@ -34,7 +34,14 @@ if not ADMIN_USERNAME or not ADMIN_PASSWORD:
 DATABASE = Path(__file__).with_name("portfolio.db")
 UPLOAD_FOLDER = Path(__file__).parent / "static" / "uploads"
 ALLOWED_IMAGES = {"png", "jpg", "jpeg", "gif", "webp"}
-PUBLIC_SITE_PATHS = ("index.html", "static/style.css", "static/book.js", "uploads")
+PUBLIC_SITE_PATHS = (
+    "index.html",
+    "static/style.css",
+    "static/book.js",
+    "static/cover-front.svg",
+    "static/cover-back.svg",
+    "uploads",
+)
 
 DEFAULT_PROFILE = {
     "name": "Selome Tesfaye Deribe",
