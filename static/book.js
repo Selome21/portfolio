@@ -8,6 +8,7 @@
         return;
     }
 
+    const mobileLayout = window.matchMedia("(max-width: 800px)").matches;
     await document.fonts.ready;
 
     const measurementSpreads = [];
@@ -64,15 +65,155 @@
         return page;
     }
 
+    function createInsideCover(side) {
+        const page = document.createElement("section");
+        page.className = `book-page book-jacket book-cover-interior book-${side}-cover`;
+        page.setAttribute("aria-label", `Inside ${side} cover`);
+        page.setAttribute("aria-hidden", "true");
+        page.inert = true;
+        return page;
+    }
+
+    function splitMobileProject(item) {
+        const description = item.querySelector("p");
+        const words = description?.textContent.trim().split(/\s+/) ?? [];
+        if (words.join(" ").length <= 250) {
+            return [item];
+        }
+
+        const chunks = [];
+        let chunk = [];
+        words.forEach((word) => {
+            if (chunk.join(" ").length + word.length + 1 > 250 && chunk.length) {
+                chunks.push(chunk.join(" "));
+                chunk = [];
+            }
+            chunk.push(word);
+        });
+        if (chunk.length) {
+            chunks.push(chunk.join(" "));
+        }
+
+        return chunks.map((text, index) => {
+            const project = index === 0 ? item : item.cloneNode(true);
+            project.querySelector("p").textContent = text;
+            if (index > 0) {
+                project.querySelector("a")?.remove();
+                project.querySelector("small")?.remove();
+            }
+            return project;
+        });
+    }
+
+    function paginateMobilePage(page) {
+        const pageNumber = page.querySelector(".page-number");
+        const heading = page.querySelector("h1, h2");
+        const kicker = page.querySelector(".page-kicker, .eyebrow");
+        const list = page.querySelector(".entries, .projects, .facts");
+        const listSelector = list?.classList.contains("projects")
+            ? ".projects"
+            : list?.classList.contains("facts")
+                ? ".facts"
+                : list
+                    ? ".entries"
+                    : null;
+        const content = [];
+
+        Array.from(page.children).forEach((element) => {
+            if (
+                element === pageNumber
+                || element === heading
+                || element === kicker
+                || element.contains(heading)
+                || element.contains(kicker)
+            ) {
+                return;
+            }
+
+            if (element === list) {
+                Array.from(list.children).forEach((item) => {
+                    const items = listSelector === ".projects" ? splitMobileProject(item) : [item];
+                    items.forEach((listItem) => content.push({ element: listItem, listSelector }));
+                    item.remove();
+                });
+            } else {
+                content.push({ element, listSelector: null });
+                element.remove();
+            }
+        });
+
+        const continuationPages = [];
+        let currentPage = page;
+        let continuationCount = 0;
+
+        content.forEach(({ element, listSelector: itemListSelector }) => {
+            let container = itemListSelector && currentPage.querySelector(itemListSelector);
+            if (itemListSelector && !container) {
+                container = page.querySelector(itemListSelector).cloneNode(false);
+                const currentPageNumber = currentPage.querySelector(".page-number");
+                if (currentPageNumber) {
+                    currentPageNumber.before(container);
+                } else {
+                    currentPage.append(container);
+                }
+            }
+
+            if (container) {
+                container.append(element);
+            } else {
+                const currentPageNumber = currentPage.querySelector(".page-number");
+                if (currentPageNumber) {
+                    currentPageNumber.before(element);
+                } else {
+                    currentPage.append(element);
+                }
+            }
+
+            if (currentPage.scrollHeight > currentPage.clientHeight + 1) {
+                element.remove();
+                const nextPage = createContinuationPage(page, ++continuationCount, null);
+                if (itemListSelector) {
+                    const nextContainer = page.querySelector(itemListSelector).cloneNode(false);
+                    const nextPageNumber = nextPage.querySelector(".page-number");
+                    if (nextPageNumber) {
+                        nextPageNumber.before(nextContainer);
+                    } else {
+                        nextPage.append(nextContainer);
+                    }
+                    nextContainer.append(element);
+                } else {
+                    const nextPageNumber = nextPage.querySelector(".page-number");
+                    if (nextPageNumber) {
+                        nextPageNumber.before(element);
+                    } else {
+                        nextPage.append(element);
+                    }
+                }
+                currentPage = nextPage;
+                continuationPages.push(nextPage);
+            }
+        });
+
+        return continuationPages;
+    }
+
     function paginatePage(page) {
-        const list = page.querySelector(".entries, .projects");
+        if (mobileLayout) {
+            return paginateMobilePage(page);
+        }
+
+        const list = page.querySelector(".entries, .projects, .facts");
         let currentPage = page;
         let currentItemContainer = list;
         let continuationCount = 0;
         const continuationPages = [];
 
         if (list) {
-            const listSelector = list.classList.contains("projects") ? ".projects" : ".entries";
+            const listSelector = list.classList.contains("projects")
+                ? ".projects"
+                : list.classList.contains("facts")
+                    ? ".facts"
+                    : ".entries";
             const items = Array.from(list.children);
             items.forEach((item) => item.remove());
 
@@ -80,7 +221,10 @@
                 currentItemContainer.append(item);
                 if (
                     currentPage.scrollHeight > currentPage.clientHeight + 1
-                    && (currentItemContainer.children.length > 1 || currentPage !== page)
+                    && (
+                        currentItemContainer.children.length > 1
+                        || (currentPage === page && currentItemContainer.children.length === 1)
+                    )
                 ) {
                     currentItemContainer.removeChild(item);
                     currentPage = createContinuationPage(page, ++continuationCount, listSelector);
@@ -120,52 +264,57 @@
     }
 
     let spreads = Array.from(book.querySelectorAll(".book-spread"));
-    if (!window.matchMedia("(max-width: 800px)").matches) {
-        const pages = spreads.flatMap((spread) => Array.from(spread.querySelectorAll(".book-page")));
-        const paginatedPages = pages.flatMap((page) => [page, ...paginatePage(page)]);
-        spreads.forEach((spread) => spread.remove());
-        measurementSpreads.forEach((spread) => spread.remove());
-        for (let index = 0; index < paginatedPages.length;) {
-            const spread = document.createElement("div");
-            spread.className = "book-spread";
-            const pageNumber = index + 1;
-            const firstPage = paginatedPages[index];
-            const isJacket = firstPage.classList.contains("book-jacket");
-            const nextPageIsJacket = paginatedPages[index + 1]?.classList.contains("book-jacket");
-            const pageCount = isJacket || nextPageIsJacket
-                ? 1
-                : 2;
-            paginatedPages.slice(index, index + pageCount).forEach((page) => {
-                const number = page.querySelector(".page-number");
-                if (number) {
-                    number.textContent = String(pageNumber + spread.childElementCount).padStart(2, "0");
-                }
-                spread.append(page);
-            });
-            if (
-                !isJacket
-                && ((pageCount === 2 && spread.childElementCount === 1) || nextPageIsJacket)
-            ) {
-                const blankPage = document.createElement("section");
-                blankPage.className = "book-page blank-page";
-                blankPage.setAttribute("aria-hidden", "true");
-                blankPage.inert = true;
-                spread.append(blankPage);
+    const pages = spreads.flatMap((spread) => Array.from(spread.querySelectorAll(".book-page")));
+    const paginatedPages = pages.flatMap((page) => [page, ...paginatePage(page)]);
+    const bookPages = [];
+    paginatedPages.forEach((page) => {
+        bookPages.push(page);
+        if (page.classList.contains("book-front-cover") && page.classList.contains("outer-cover")) {
+            if (!mobileLayout) {
+                bookPages.push(createInsideCover("front"));
             }
-            index += pageCount;
-            if (isJacket) {
-                spread.classList.add("single-page");
-                spread.classList.add("cover-spread");
-                spread.classList.add(
-                    firstPage.classList.contains("book-front-cover")
-                        ? "front-cover-spread"
-                        : "back-cover-spread"
-                );
-            }
-            book.append(spread);
         }
-        spreads = Array.from(book.querySelectorAll(".book-spread"));
+    });
+
+    spreads.forEach((spread) => spread.remove());
+    measurementSpreads.forEach((spread) => spread.remove());
+    for (let index = 0; index < bookPages.length;) {
+        const spread = document.createElement("div");
+        spread.className = "book-spread";
+        const pageNumber = index + 1;
+        const firstPage = bookPages[index];
+        const isOuterCover = firstPage.classList.contains("outer-cover");
+        const nextPageIsOuterCover = bookPages[index + 1]?.classList.contains("outer-cover");
+        const pageCount = mobileLayout || isOuterCover || nextPageIsOuterCover ? 1 : 2;
+        bookPages.slice(index, index + pageCount).forEach((page) => {
+            const number = page.querySelector(".page-number");
+            if (number) {
+                number.textContent = String(pageNumber + spread.childElementCount).padStart(2, "0");
+            }
+            spread.append(page);
+        });
+        if (!mobileLayout && !isOuterCover && spread.childElementCount === 1) {
+            const blankPage = document.createElement("section");
+            blankPage.className = "book-page blank-page";
+            blankPage.setAttribute("aria-hidden", "true");
+            blankPage.inert = true;
+            spread.append(blankPage);
+        }
+        index += pageCount;
+        if (mobileLayout) {
+            spread.classList.add("single-page");
+        }
+        if (isOuterCover) {
+            spread.classList.add("single-page", "cover-spread");
+            spread.classList.add(
+                firstPage.classList.contains("book-front-cover")
+                    ? "front-cover-spread"
+                    : "back-cover-spread"
+            );
+        }
+        book.append(spread);
     }
+    spreads = Array.from(book.querySelectorAll(".book-spread"));
 
     const pageSpread = new Map();
     spreads.forEach((spread, index) => {
@@ -194,8 +343,8 @@
                 "is-turn-forward-underlay",
                 "is-turn-back-underlay"
             );
-            spread.querySelectorAll(".is-turn-page-hidden").forEach((page) => {
-                page.classList.remove("is-turn-page-hidden");
+            spread.querySelectorAll(".is-turn-page-hidden, .is-cover-page-hidden").forEach((page) => {
+                page.classList.remove("is-turn-page-hidden", "is-cover-page-hidden");
             });
         });
         turnInProgress = false;
@@ -246,6 +395,19 @@
         return clone;
     }
 
+    function finishTurnToSpread(targetIndex, pageId) {
+        if (!turnInProgress) {
+            return;
+        }
+        const queued = pendingNavigation;
+        const completedPageId = queued && queued.index === targetIndex ? queued.pageId : pageId;
+        renderSpread(targetIndex, completedPageId);
+        if (queued && queued.index !== targetIndex) {
+            const nextDirection = queued.index >= activeSpread ? "forward" : "back";
+            animateToSpread(queued.index, nextDirection, queued.pageId);
+        }
+    }
+
     function animateToSpread(index, direction, pageId) {
         const targetIndex = Math.max(0, Math.min(index, spreads.length - 1));
         if (targetIndex === activeSpread) {
@@ -266,8 +428,9 @@
         const targetSpread = spreads[targetIndex];
         const goingForward = direction === "forward";
         const mobileLayout = window.matchMedia("(max-width: 800px)").matches;
-        const openingCover = currentSpread.classList.contains("cover-spread");
-        const fullSpreadTurn = mobileLayout && !openingCover;
+        const coverTurn = currentSpread.classList.contains("cover-spread")
+            || targetSpread.classList.contains("cover-spread");
+        const fullSpreadTurn = mobileLayout && !coverTurn;
         const currentPage = currentSpread.querySelector(goingForward ? ".book-page:last-child" : ".book-page:first-child");
         const reversePage = targetSpread.querySelector(goingForward ? ".book-page:first-child" : ".book-page:last-child");
         const sheet = document.createElement("div");
@@ -275,26 +438,30 @@
         const back = document.createElement("div");
 
         sheet.className = `page-turn-sheet ${goingForward ? "turn-forward" : "turn-back"}${fullSpreadTurn ? " is-mobile" : ""}`;
+        if (coverTurn) {
+            sheet.classList.add("is-cover-turn");
+        }
         sheet.setAttribute("aria-hidden", "true");
         sheet.inert = true;
         front.className = "page-turn-face page-turn-front";
         back.className = "page-turn-face page-turn-back";
-        if (openingCover) {
-            const cover = currentSpread.querySelector(".book-jacket");
-            const insideCover = cloneForTurn(cover);
-            insideCover.classList.add("book-cover-interior");
-            insideCover.querySelector("h1, h2")?.remove();
-            front.append(cloneForTurn(cover));
-            back.append(insideCover);
+        if (fullSpreadTurn) {
+            front.append(cloneForTurn(currentSpread));
+            back.append(cloneForTurn(targetSpread));
+        } else {
+            front.append(cloneForTurn(currentPage));
+            back.append(cloneForTurn(reversePage));
+        }
+        if (coverTurn) {
             currentSpread.classList.add("is-turn-current");
             currentPage.classList.add("is-turn-page-hidden");
             targetSpread.classList.add("is-cover-opening");
-        } else {
-            front.append(cloneForTurn(fullSpreadTurn ? currentSpread : currentPage));
-            back.append(cloneForTurn(fullSpreadTurn ? targetSpread : reversePage));
-            if (!fullSpreadTurn) {
-                currentPage.classList.add("is-turn-page-hidden");
-            }
+            targetSpread.querySelectorAll(".book-cover-interior, .blank-page").forEach((page) => {
+                page.classList.add("is-cover-page-hidden");
+            });
+        } else if (!fullSpreadTurn) {
+            currentPage.classList.add("is-turn-page-hidden");
+            currentSpread.classList.add("is-turn-current");
         }
         sheet.append(front, back);
 
@@ -309,25 +476,12 @@
         );
         currentSpread.after(targetSpread);
         book.append(sheet);
-        const finishTurn = () => {
-            if (!turnInProgress) {
-                return;
-            }
-            const queued = pendingNavigation;
-            const completedPageId = queued && queued.index === targetIndex ? queued.pageId : pageId;
-            renderSpread(targetIndex, completedPageId);
-            if (queued && queued.index !== targetIndex) {
-                const nextDirection = queued.index >= activeSpread ? "forward" : "back";
-                animateToSpread(queued.index, nextDirection, queued.pageId);
-            }
-        };
-
         sheet.addEventListener("animationend", (event) => {
             if (event.target === sheet) {
-                finishTurn();
+                finishTurnToSpread(targetIndex, pageId);
             }
         });
-        turnTimeout = window.setTimeout(finishTurn, 850);
+        turnTimeout = window.setTimeout(() => finishTurnToSpread(targetIndex, pageId), 850);
     }
 
     function turn(direction) {
