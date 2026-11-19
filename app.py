@@ -62,6 +62,7 @@ DEFAULT_PROFILE = {
 }
 
 DEFAULT_ENTRIES = [
+    ("experience", "Virtual Freelancer", "PARAHIGG", "2026 – Present", "Working remotely on website testing and quality assessment, identifying issues and improvement opportunities, and recommending expansions that can enhance the user experience and capabilities of PARAHIGG's sites."),
     ("experience", "Research and Development Professional", "TreeM", "Fall 2026 – Present", ""),
     ("experience", "Financial Consultant", "Shinhan Life (Freelancer)", "Summer 2026 – Present", ""),
     ("experience", "Research Assistant", "Sungkyunkwan University Communication Lab", "Fall 2023 – February 2026", "Supported research work in an electrical and computer engineering lab."),
